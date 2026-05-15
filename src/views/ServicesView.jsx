@@ -1,11 +1,13 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import ConsultButton from '../components/ConsultButton.jsx';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../firebase';
 
 const ServiceCategory = ({ title, desc, includes, delay, isMobile }) => (
+// ... (omitting ServiceCategory content as it stays same, but I must provide full ReplacementContent for the range)
   <motion.div
-    // Neutralize entrance animations on mobile for a clean swipe
     initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
     whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
     viewport={{ once: true }}
@@ -44,13 +46,31 @@ const ServiceCategory = ({ title, desc, includes, delay, isMobile }) => (
 const ServicesView = ({ onNavigate, onContact, isMobile }) => {
   const [activeIdx, setActiveIdx] = useState(0);
   const scrollRef = useRef(null);
-
-  const services = [
+  const [services, setServices] = useState([
     { title: "Contract Drafting & Review", desc: "Clear, enforceable agreements that protect your business and reduce risk", includes: ["Supplier agreements", "Client contracts", "NDAs", "Shareholder agreements", "Terms and conditions"] },
     { title: "Corporate & Compliance Support", desc: "Stay compliant and avoid penalties or governance issues", includes: ["CIPC compliance", "Beneficial ownership requirements", "Corporate governance", "Regulatory compliance", "Licensing and permits"] },
     { title: "Ongoing Legal Advisory", desc: "Consistent legal support as your business grows", includes: ["Day-to-day legal queries", "Contract reviews", "Risk guidance", "Strategic input", "Compliance support"] },
     { title: "Commercial Legal Support", desc: "Structure your business relationships properly", includes: ["Partnerships and agreements", "Business structuring", "Commercial negotiations", "Transaction support", "Advisory on business arrangements"] }
-  ];
+  ]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'services'));
+        const servicesData = querySnapshot.docs.map(doc => doc.data());
+        if (servicesData.length > 0) {
+          setServices(servicesData);
+        }
+      } catch (error) {
+        console.error("Error fetching services:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServices();
+  }, []);
 
   const handleScroll = () => {
     if (!scrollRef.current) return;

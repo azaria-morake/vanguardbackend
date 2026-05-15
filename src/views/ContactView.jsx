@@ -2,8 +2,10 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone } from 'lucide-react';
 import ConsultButton from '../components/ConsultButton.jsx';
+import { useSettings } from '../context/SettingsContext.jsx';
 
 const ContactView = ({ onContact }) => {
+  const { settings } = useSettings();
   const [formData, setFormData] = React.useState({
     name: '',
     email: '',
@@ -18,7 +20,7 @@ const ContactView = ({ onContact }) => {
   const handleEmailSubmit = (e) => {
     e.preventDefault();
     const { name, email, message } = formData;
-    const to = "contact@vanguardlegal.co.za";
+    const to = settings.contact.email;
     const subject = encodeURIComponent(`Inquiry from ${name}`);
     const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
     window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
@@ -61,12 +63,12 @@ const ContactView = ({ onContact }) => {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: 'var(--color-primary)', opacity: 0.8 }}>
                 <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--color-secondary)' }}></div>
-                <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>We're based in Sandton, Johannesburg</span>
+                <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>We're based in {settings.contact.location}</span>
               </div>
 
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginTop: '0.5rem' }}>
                 <a
-                  href="mailto:contact@vanguardlegal.co.za"
+                  href={`mailto:${settings.contact.email}`}
                   className="btn btn-teal-outline"
                   style={{ textDecoration: 'none' }}
                 >
@@ -75,7 +77,7 @@ const ContactView = ({ onContact }) => {
                 </a>
 
                 <a
-                  href="tel:+27788334236"
+                  href={`tel:${settings.contact.phone}`}
                   className="btn btn-teal-outline"
                   style={{ textDecoration: 'none' }}
                 >

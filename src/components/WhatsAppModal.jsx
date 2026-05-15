@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, MessageCircle, Copy } from 'lucide-react';
+import { useSettings } from '../context/SettingsContext.jsx';
 
 const WhatsAppModal = ({ isOpen, onClose }) => {
+  const { settings } = useSettings();
   const [message, setMessage] = useState('');
 
   const handleContinue = () => {
     const encodedMessage = encodeURIComponent(message || "I would like to consult about legal services.");
-    window.open(`https://wa.me/27788334236?text=${encodedMessage}`, '_blank');
+    window.open(`https://wa.me/${settings.contact.phone.replace(/[^0-9]/g, '')}?text=${encodedMessage}`, '_blank');
     onClose();
   };
 

@@ -2,8 +2,12 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ShieldCheck, Truck } from 'lucide-react';
 import ConsultButton from './ConsultButton.jsx';
+import { useSettings } from '../context/SettingsContext.jsx';
 
 const Hero = ({ onNavigate, onContact }) => {
+  const { settings } = useSettings();
+  const { title, subtitle } = settings.heros.home;
+
   return (
     <>
       <section className="hero-section-fix" style={{
@@ -22,7 +26,7 @@ const Hero = ({ onNavigate, onContact }) => {
               transition={{ duration: 0.6 }}
               style={{ fontSize: '3rem', color: 'var(--color-primary)', marginBottom: '1.5rem', lineHeight: 1.1 }}
             >
-              Legal support that keeps your business protected and moving forward
+              {title}
             </motion.h1>
 
             <motion.p
@@ -31,7 +35,7 @@ const Hero = ({ onNavigate, onContact }) => {
               transition={{ duration: 0.6, delay: 0.1 }}
               style={{ fontSize: '1.15rem', color: 'var(--color-text)', marginBottom: '2.5rem', maxWidth: '540px' }}
             >
-              We help SMEs simplify compliance, strengthen contracts and avoid costly legal mistakes through clear, practical support tailored to how businesses actually operate.
+              {subtitle}
             </motion.p>
 
             <motion.div

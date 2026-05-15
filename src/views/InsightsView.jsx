@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, User, ArrowRight } from 'lucide-react';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { db } from '../firebase';
 
 export const ArticleModal = ({ article, onClose, onContact }) => {
   if (!article) return null;
@@ -129,7 +131,7 @@ export const ArticleModal = ({ article, onClose, onContact }) => {
   );
 };
 
-const ArticleCard = ({ article, onReadMore }) => (
+export const ArticleCard = ({ article, onReadMore }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
@@ -189,8 +191,8 @@ const ArticleCard = ({ article, onReadMore }) => (
 
 const InsightsView = ({ isMobile, onContact, onReadMore }) => {
   const [visibleCount, setVisibleCount] = useState(6);
-
-  const articles = [
+  const [loading, setLoading] = useState(true);
+  const [articles, setArticles] = useState([
     {
       title: "Radio interview: When does business debt become personal liability for directors?",
       date: "April 12, 2026",
@@ -346,7 +348,26 @@ const InsightsView = ({ isMobile, onContact, onReadMore }) => {
       excerpt: "The proposed VAT hike from 15% to 16% was a major concern for SMEs. We break down the latest updates, including the recent withdrawal of the proposal.",
       fullContent: "South Africa’s 2025 VAT Hike: What Businesses Need to Know\n\nUpdate (April 2025): The proposed VAT hike from 15% to 16%, originally set to roll out over the next two years, has officially been withdrawn. As always, we remain committed to keeping you informed and supported through shifting regulatory landscapes.\n\nOverview\nThe South African government has announced a 1% increase in Value-Added Tax (VAT), raising the rate from 15% to 16%.\n\nImplications for Businesses\n1. Pricing Strategy Adjustments\n2. Revised Invoicing & Compliance\n3. Cash Flow Management\n\nLegal & Contractual Considerations\nCommercial contracts—especially long-term agreements or fixed-price contracts—must be reviewed. Ready to update your contracts to reflect the new VAT rate? Contact us today for professional legal support."
     }
-  ];
+  ]);
+
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        const q = query(collection(db, 'articles'), orderBy('date', 'desc'));
+        const querySnapshot = await getDocs(q);
+        const articlesData = querySnapshot.docs.map(doc => doc.data());
+        if (articlesData.length > 0) {
+          setArticles(articlesData);
+        }
+      } catch (error) {
+        console.error("Error fetching articles:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchArticles();
+  }, []);
 
   const handleLoadMore = () => {
     setVisibleCount(prev => Math.min(prev + 6, articles.length));
