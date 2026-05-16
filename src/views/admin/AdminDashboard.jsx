@@ -136,7 +136,7 @@ const AdminDashboard = ({ onNavigate }) => {
 
   // Logged in -> Show Admin CMS Layout
   return (
-    <div className="admin-container" style={{ position: 'fixed', inset: 0, zIndex: 9999 }}>
+    <div className="admin-container" style={{ width: '100%', minHeight: '100vh' }}>
       {/* Sidebar */}
       <aside className="admin-sidebar">
         <div className="admin-sidebar-logo">
@@ -195,13 +195,24 @@ const AdminDashboard = ({ onNavigate }) => {
             {activeTab} Management
           </div>
 
-          <button
-            onClick={() => onNavigate('home')}
-            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.25rem', backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid #334155', borderRadius: '20px', color: '#f8fafc', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s' }}
-          >
-            <span>Exit Admin View</span>
-            <ExternalLink size={16} color="#14b8a6" />
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <button
+              onClick={() => window.open('/', '_blank')}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.25rem', backgroundColor: 'rgba(20, 184, 166, 0.1)', border: '1px solid #14b8a6', borderRadius: '20px', color: '#14b8a6', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
+              onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(20, 184, 166, 0.2)'}
+              onMouseLeave={e => e.currentTarget.style.backgroundColor = 'rgba(20, 184, 166, 0.1)'}
+            >
+              <span>View Live Site</span>
+              <ExternalLink size={16} />
+            </button>
+
+            <button
+              onClick={() => onNavigate('home')}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.25rem', backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid #334155', borderRadius: '20px', color: '#f8fafc', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s' }}
+            >
+              <span>Exit Admin</span>
+            </button>
+          </div>
         </header>
 
         <div className="admin-content">

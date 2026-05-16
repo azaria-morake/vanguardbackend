@@ -97,8 +97,9 @@ function App() {
 
       {/* Navigation */}
 // ... (omitting header content)
-      <header
-        className="flat-header"
+      {activeView !== 'admin' && (
+        <header
+          className="flat-header"
         style={{
           position: 'fixed',
           top: 0,
@@ -412,6 +413,7 @@ function App() {
           )}
         </AnimatePresence>
       </header>
+      )}
 
       {/* Main Content Area */}
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 1 }}>
@@ -441,7 +443,9 @@ function App() {
         </AnimatePresence>
       </main>
 
-      <Footer onNavigate={navigateTo} onContact={setContactModal} onLegal={setLegalModal} isMobile={isMobile} />
+      {activeView !== 'admin' && (
+        <Footer onNavigate={navigateTo} onContact={setContactModal} onLegal={setLegalModal} isMobile={isMobile} />
+      )}
 
       <AnimatePresence>
         {selectedArticle && (

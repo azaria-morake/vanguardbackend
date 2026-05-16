@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, User, ArrowRight } from 'lucide-react';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '../firebase';
+import MDEditor from '@uiw/react-md-editor';
 
 export const ArticleModal = ({ article, onClose, onContact }) => {
   if (!article) return null;
@@ -49,27 +50,20 @@ export const ArticleModal = ({ article, onClose, onContact }) => {
         </div>
 
         <div className="legal-content-scroll" style={{ padding: '2.5rem 3rem', overflowY: 'auto', flexGrow: 1, color: 'var(--color-text)', lineHeight: 1.8, fontSize: '1.05rem' }}>
-          {article.image && article.isHeader && (
-            <div style={{ marginBottom: '2.5rem', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}>
-              <img src={article.image} alt={article.title} style={{ width: '100%', height: 'auto', display: 'block' }} />
+          {article.image && (
+            <div style={{ marginBottom: '2.5rem', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.1)', background: '#0f172a' }}>
+              <img src={article.image} alt={article.title} style={{ width: '100%', maxHeight: '450px', objectFit: 'cover', display: 'block' }} />
             </div>
           )}
           
           {article.fullContent ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              {article.fullContent.split('\n\n').map((para, i) => (
-                <p key={i}>{para}</p>
-              ))}
+            <div data-color-mode="light" className="article-markdown-container" style={{ fontSize: '1.05rem', lineHeight: 1.8 }}>
+              <MDEditor.Markdown source={article.fullContent} style={{ background: 'transparent', color: 'var(--color-text)', fontSize: 'inherit', lineHeight: 'inherit' }} />
             </div>
           ) : (
             <p>{article.excerpt}</p>
           )}
 
-          {article.image && !article.isHeader && (
-            <div style={{ marginTop: '2.5rem', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}>
-              <img src={article.image} alt={article.title} style={{ width: '100%', height: 'auto', display: 'block' }} />
-            </div>
-          )}
 
           {article.audioEmbed && (
             <div style={{ marginTop: '2.5rem', borderRadius: '16px', overflow: 'hidden', background: '#f1f5f9', padding: '1rem' }}>
@@ -351,22 +345,19 @@ const InsightsView = ({ isMobile, onContact, onReadMore }) => {
   ]);
 
   useEffect(() => {
-    const fetchArticles = async () => {
-      try {
-        const q = query(collection(db, 'articles'), orderBy('date', 'desc'));
-        const querySnapshot = await getDocs(q);
-        const articlesData = querySnapshot.docs.map(doc => doc.data());
-        if (articlesData.length > 0) {
-          setArticles(articlesData);
-        }
-      } catch (error) {
-        console.error("Error fetching articles:", error);
-      } finally {
-        setLoading(false);
+    const q = query(collection(db, 'articles'), orderBy('date', 'desc'));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const articlesData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      if (articlesData.length > 0) {
+        setArticles(articlesData);
       }
-    };
+      setLoading(false);
+    }, (error) => {
+      console.error("Error listening to articles:", error);
+      setLoading(false);
+    });
 
-    fetchArticles();
+    return () => unsubscribe();
   }, []);
 
   const handleLoadMore = () => {

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs, doc, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../firebase';
-import { Plus, Edit, Trash2, X, Loader2, Save, Image as ImageIcon, Star } from 'lucide-react';
+import { Plus, Edit, Trash2, X, Loader2, Save, Image as ImageIcon, Star, Maximize2, Check } from 'lucide-react';
+import MDEditor from '@uiw/react-md-editor';
 
 const AdminArticles = () => {
   const [articles, setArticles] = useState([]);
@@ -10,22 +11,20 @@ const AdminArticles = () => {
   const [editingArticle, setEditingArticle] = useState(null);
   const [modalMode, setModalMode] = useState('add');
   const [uploadingImage, setUploadingImage] = useState(false);
-
-  const fetchArticles = async () => {
-    setLoading(true);
-    try {
-      const snapshot = await getDocs(collection(db, 'articles'));
-      const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setArticles(list);
-    } catch (error) {
-      console.error("Error fetching articles:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
 
   useEffect(() => {
-    fetchArticles();
+    const unsubscribe = onSnapshot(collection(db, 'articles'), (snapshot) => {
+      const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      // Sort by date or display order if needed
+      setArticles(list);
+      setLoading(false);
+    }, (error) => {
+      console.error("Error listening to articles:", error);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const handleOpenAdd = () => {
@@ -265,16 +264,49 @@ const AdminArticles = () => {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '0.5rem', fontWeight: 600 }}>Full Article Content (Markdown or plain text with line breaks)</label>
-                <textarea
-                  value={editingArticle.fullContent}
-                  onChange={(e) => setEditingArticle(prev => ({ ...prev, fullContent: e.target.value }))}
-                  className="admin-input"
-                  rows={8}
-                  placeholder="Full article content..."
-                  style={{ resize: 'vertical', fontFamily: 'monospace' }}
-                  required
-                />
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                  <label style={{ fontSize: '0.85rem', color: '#94a3b8', fontWeight: 600 }}>Full Article Content (Markdown Supported)</label>
+                  <button
+                    type="button"
+                    onClick={() => setIsEditorOpen(true)}
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#14b8a6', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', background: 'rgba(20, 184, 166, 0.1)', padding: '0.4rem 0.8rem', borderRadius: '8px', border: '1px solid #14b8a6' }}
+                  >
+                    <Maximize2 size={14} />
+                    <span>Open Full Window Editor</span>
+                  </button>
+                </div>
+                
+                <div
+                  onClick={() => setIsEditorOpen(true)}
+                  style={{
+                    width: '100%',
+                    minHeight: '120px',
+                    maxHeight: '220px',
+                    padding: '1.25rem',
+                    background: '#0f172a',
+                    border: '1px solid #334155',
+                    borderRadius: '12px',
+                    color: editingArticle.fullContent ? '#e2e8f0' : '#64748b',
+                    fontSize: '0.95rem',
+                    cursor: 'pointer',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 7,
+                    WebkitBoxOrient: 'vertical',
+                    lineHeight: 1.6,
+                    fontFamily: 'monospace',
+                    boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)',
+                    transition: 'border-color 0.2s'
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.borderColor = '#14b8a6'}
+                  onMouseLeave={e => e.currentTarget.style.borderColor = '#334155'}
+                >
+                  {editingArticle.fullContent ? editingArticle.fullContent : "Click here to open the full-window rich Markdown editor..."}
+                </div>
+                <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.5rem', textAlign: 'right' }}>
+                  Click inside box to launch distraction-free editor
+                </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
@@ -317,6 +349,35 @@ const AdminArticles = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Full Screen MDEditor Modal */}
+      {isEditorOpen && editingArticle && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 100000, background: '#0f172a', display: 'flex', flexDirection: 'column' }} data-color-mode="dark">
+          <div style={{ height: '72px', padding: '0 2.5rem', background: '#020617', borderBottom: '1px solid #1e293b', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <h3 style={{ fontSize: '1.25rem', color: '#f8fafc', fontWeight: 700 }}>Distraction-Free Article Editor</h3>
+              <span style={{ color: '#64748b', fontSize: '0.85rem' }}>Editing: {editingArticle.title || 'Untitled Insight'}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsEditorOpen(false)}
+              className="admin-btn admin-btn-primary"
+            >
+              <Check size={18} />
+              <span>Done Editing (Return to Form)</span>
+            </button>
+          </div>
+          <div style={{ flex: 1, padding: '1.5rem', background: '#0b1120', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            <MDEditor
+              value={editingArticle.fullContent || ''}
+              onChange={(val) => setEditingArticle(prev => ({ ...prev, fullContent: val || '' }))}
+              height="100%"
+              style={{ flex: 1, border: '1px solid #334155', borderRadius: '12px', overflow: 'hidden' }}
+              preview="live"
+            />
           </div>
         </div>
       )}

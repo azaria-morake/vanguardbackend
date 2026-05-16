@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import ConsultButton from '../components/ConsultButton.jsx';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
 
 const ServiceCategory = ({ title, desc, includes, delay, isMobile }) => (
@@ -55,21 +55,18 @@ const ServicesView = ({ onNavigate, onContact, isMobile }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, 'services'));
-        const servicesData = querySnapshot.docs.map(doc => doc.data());
-        if (servicesData.length > 0) {
-          setServices(servicesData);
-        }
-      } catch (error) {
-        console.error("Error fetching services:", error);
-      } finally {
-        setLoading(false);
+    const unsubscribe = onSnapshot(collection(db, 'services'), (querySnapshot) => {
+      const servicesData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      if (servicesData.length > 0) {
+        setServices(servicesData);
       }
-    };
+      setLoading(false);
+    }, (error) => {
+      console.error("Error listening to services:", error);
+      setLoading(false);
+    });
 
-    fetchServices();
+    return () => unsubscribe();
   }, []);
 
   const handleScroll = () => {

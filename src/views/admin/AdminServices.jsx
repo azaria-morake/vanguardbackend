@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs, doc, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { Plus, Edit, Trash2, X, Loader2, Save } from 'lucide-react';
 
@@ -9,21 +9,17 @@ const AdminServices = () => {
   const [editingService, setEditingService] = useState(null); // null, or service object for modal
   const [modalMode, setModalMode] = useState('add'); // 'add' or 'edit'
 
-  const fetchServices = async () => {
-    setLoading(true);
-    try {
-      const snapshot = await getDocs(collection(db, 'services'));
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, 'services'), (snapshot) => {
       const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setServices(list);
-    } catch (error) {
-      console.error("Error fetching services:", error);
-    } finally {
       setLoading(false);
-    }
-  };
+    }, (error) => {
+      console.error("Error listening to services:", error);
+      setLoading(false);
+    });
 
-  useEffect(() => {
-    fetchServices();
+    return () => unsubscribe();
   }, []);
 
   const handleOpenAdd = () => {
