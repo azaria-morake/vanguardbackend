@@ -1,6 +1,17 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { FileText, Gavel, Calendar, BarChart2 } from 'lucide-react';
+import { useSettings } from '../context/SettingsContext';
+
+const getIcon = (title) => {
+  switch (title?.toLowerCase()) {
+    case 'contracts': return FileText;
+    case 'compliance': return Gavel;
+    case 'advisory': return Calendar;
+    case 'strategy': return BarChart2;
+    default: return FileText;
+  }
+};
 
 const HelpCard = ({ icon: Icon, title, desc, delay, isMobile }) => (
   <motion.div
@@ -50,21 +61,31 @@ const HelpCard = ({ icon: Icon, title, desc, delay, isMobile }) => (
 const FeaturesSection = () => {
   const [activeIdx, setActiveIdx] = useState(0);
   const scrollRef = useRef(null);
+  const { settings } = useSettings();
 
-  const cards = [
-    { icon: FileText, title: 'Contracts', desc: 'Clear, enforceable agreements that reduce disputes and risk.' },
-    { icon: Gavel, title: 'Compliance', desc: 'Stay on top of legal obligations without complexity.' },
-    { icon: Calendar, title: 'Advisory', desc: 'Practical guidance when you need it most.' },
-    { icon: BarChart2, title: 'Strategy', desc: 'Helping you make decisions, not just interpret the law.' }
-  ];
+  const featuresData = settings.pages?.home?.features || {
+    title: "How We Help",
+    cards: [
+      { title: 'Contracts', desc: 'Clear, enforceable agreements that reduce disputes and risk.' },
+      { title: 'Compliance', desc: 'Stay on top of legal obligations without complexity.' },
+      { title: 'Advisory', desc: 'Practical guidance when you need it most.' },
+      { title: 'Strategy', desc: 'Helping you make decisions, not just interpret the law.' }
+    ],
+    whyTitle: "Why SMEs Choose Us",
+    whySubtitle: "Built for business owners",
+    reasons: [
+      'Fixed-fee pricing — no unexpected costs',
+      'Clear, practical advice without jargon',
+      'Fast turnaround times',
+      'Direct access to experienced legal support',
+      'Solutions aligned with how SMEs actually operate'
+    ]
+  };
 
-  const reasons = [
-    'Fixed-fee pricing — no unexpected costs',
-    'Clear, practical advice without jargon',
-    'Fast turnaround times',
-    'Direct access to experienced legal support',
-    'Solutions aligned with how SMEs actually operate'
-  ];
+  const cardsWithIcons = featuresData.cards?.map(c => ({
+    ...c,
+    icon: getIcon(c.title)
+  })) || [];
 
   const handleScroll = () => {
     if (!scrollRef.current) return;
@@ -91,7 +112,7 @@ const FeaturesSection = () => {
 
           {/* Left Column: How We Help (Square Cards) */}
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <h2 style={{ fontSize: '2rem', color: 'var(--color-primary)', marginBottom: '2.5rem' }}>How We Help</h2>
+            <h2 style={{ fontSize: '2rem', color: 'var(--color-primary)', marginBottom: '2.5rem' }}>{featuresData.title}</h2>
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(2, 1fr)',
@@ -99,7 +120,7 @@ const FeaturesSection = () => {
               alignContent: 'start',
               flexGrow: 1
             }}>
-              {cards.map((card, idx) => (
+              {cardsWithIcons.map((card, idx) => (
                 <HelpCard key={idx} {...card} delay={0.1 * idx} />
               ))}
             </div>
@@ -110,7 +131,7 @@ const FeaturesSection = () => {
 
           {/* Right Column: Why Choose Us (Inside Bordered Card) */}
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <h2 style={{ fontSize: '2rem', color: 'var(--color-primary)', marginBottom: '2.5rem' }}>Why SMEs Choose Us</h2>
+            <h2 style={{ fontSize: '2rem', color: 'var(--color-primary)', marginBottom: '2.5rem' }}>{featuresData.whyTitle}</h2>
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -128,11 +149,11 @@ const FeaturesSection = () => {
               }}
             >
               <h3 style={{ fontSize: '1.1rem', color: 'var(--color-primary)', marginBottom: '2.5rem', lineHeight: 1.2 }}>
-                Built for business owners
+                {featuresData.whySubtitle}
               </h3>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                {reasons.map((reason, idx) => (
+                {featuresData.reasons?.map((reason, idx) => (
                   <motion.div
                     key={idx}
                     initial={{ opacity: 0, x: 20 }}
@@ -162,7 +183,7 @@ const FeaturesSection = () => {
             MOBILE LAYOUT 
             ========================================= */}
         <div className="mobile-only-layout" style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-          <h2 style={{ fontSize: '2rem', color: 'var(--color-primary)', marginBottom: '1.5rem', textAlign: 'center' }}>How We Help</h2>
+          <h2 style={{ fontSize: '2rem', color: 'var(--color-primary)', marginBottom: '1.5rem', textAlign: 'center' }}>{featuresData.title}</h2>
 
           {/* Swipeable Container */}
           <div
@@ -170,7 +191,7 @@ const FeaturesSection = () => {
             onScroll={handleScroll}
             className="mobile-features-carousel"
           >
-            {cards.map((card, idx) => (
+            {cardsWithIcons.map((card, idx) => (
               <div key={idx} className="mobile-square-card-wrapper">
                 <HelpCard {...card} isMobile={true} delay={0} />
               </div>
@@ -179,7 +200,7 @@ const FeaturesSection = () => {
 
           {/* Centered Pulsating Dots */}
           <div className="mobile-carousel-dots">
-            {cards.map((_, idx) => (
+            {cardsWithIcons.map((_, idx) => (
               <div
                 key={idx}
                 className={`mobile-dot ${activeIdx === idx ? 'active' : ''}`}
@@ -195,9 +216,9 @@ const FeaturesSection = () => {
 
           {/* Static Section below carousel */}
           <div style={{ marginTop: '3rem' }}>
-            <h2 style={{ fontSize: '2rem', color: 'var(--color-primary)', marginBottom: '1.5rem', textAlign: 'center' }}>Why SMEs Choose Us</h2>
+            <h2 style={{ fontSize: '2rem', color: 'var(--color-primary)', marginBottom: '1.5rem', textAlign: 'center' }}>{featuresData.whyTitle}</h2>
             <div style={{ background: 'white', border: '1px solid var(--color-secondary)', borderRadius: '16px', padding: '2rem 1.5rem' }}>
-              {reasons.map((reason, idx) => (
+              {featuresData.reasons?.map((reason, idx) => (
                 <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
                   <div style={{ color: 'var(--color-secondary)', flexShrink: 0 }}>✔</div>
                   <span style={{ fontSize: '1rem', color: 'var(--color-text)' }}>{reason}</span>

@@ -2,16 +2,17 @@
 import { useState, useEffect } from 'react';
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../firebase';
-import { Settings, FileText, Briefcase, LogOut, Lock, Mail, Key, ShieldCheck, ExternalLink, Loader2, AlertTriangle, CheckCircle2, AlertCircle, Info } from 'lucide-react';
+import { Settings, FileText, Briefcase, LogOut, Lock, Mail, Key, ShieldCheck, ExternalLink, Loader2, AlertTriangle, CheckCircle2, AlertCircle, Info, Layout } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import AdminSettings from './AdminSettings';
 import AdminArticles from './AdminArticles';
 import AdminServices from './AdminServices';
+import AdminPages from './AdminPages';
 
 const AdminDashboard = ({ onNavigate }) => {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('articles'); // 'articles', 'services', 'settings'
+  const [activeTab, setActiveTab] = useState('pages'); // 'pages', 'articles', 'services', 'settings'
   const [snackbar, setSnackbar] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
 
@@ -167,6 +168,14 @@ const AdminDashboard = ({ onNavigate }) => {
 
         <nav className="admin-nav">
           <div
+            onClick={() => setActiveTab('pages')}
+            className={`admin-nav-item ${activeTab === 'pages' ? 'active' : ''}`}
+          >
+            <Layout size={20} />
+            <span>Page Sections</span>
+          </div>
+
+          <div
             onClick={() => setActiveTab('articles')}
             className={`admin-nav-item ${activeTab === 'articles' ? 'active' : ''}`}
           >
@@ -235,6 +244,7 @@ const AdminDashboard = ({ onNavigate }) => {
         </header>
 
         <div className="admin-content">
+          {activeTab === 'pages' && <AdminPages showSnackbar={showSnackbar} />}
           {activeTab === 'articles' && <AdminArticles showSnackbar={showSnackbar} confirmAction={confirmAction} />}
           {activeTab === 'services' && <AdminServices showSnackbar={showSnackbar} confirmAction={confirmAction} />}
           {activeTab === 'settings' && <AdminSettings showSnackbar={showSnackbar} />}

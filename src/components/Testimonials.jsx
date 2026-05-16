@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { useSettings } from '../context/SettingsContext';
 
 const TestimonialCard = ({ quote, author, role, delay, isMobile }) => (
   <motion.div
@@ -42,12 +43,18 @@ const TestimonialCard = ({ quote, author, role, delay, isMobile }) => (
 const Testimonials = () => {
   const [activeIdx, setActiveIdx] = useState(0);
   const scrollRef = useRef(null);
+  const { settings } = useSettings();
 
-  const testimonials = [
-    { quote: "Vanguard Legal helped us restructure a key agreement and avoid what could have become a serious dispute. The process was clear, efficient and practical.", author: "Founder", role: "SME in logistics" },
-    { quote: "We needed urgent help reviewing a supplier contract. The turnaround was quick and the advice highlighted risks we hadn't considered.", author: "Director", role: "Retail business" },
-    { quote: "Clear, practical advice without the legal jargon. It's like having a legal partner who understands how businesses actually work.", author: "SME owner", role: "Consulting sector" }
-  ];
+  const testData = settings.pages?.home?.testimonials || {
+    title: "Testimonials",
+    list: [
+      { quote: "Vanguard Legal helped us restructure a key agreement and avoid what could have become a serious dispute. The process was clear, efficient and practical.", author: "Founder", role: "SME in logistics" },
+      { quote: "We needed urgent help reviewing a supplier contract. The turnaround was quick and the advice highlighted risks we hadn't considered.", author: "Director", role: "Retail business" },
+      { quote: "Clear, practical advice without the legal jargon. It's like having a legal partner who understands how businesses actually work.", author: "SME owner", role: "Consulting sector" }
+    ]
+  };
+
+  const testimonials = testData.list || [];
 
   const handleScroll = () => {
     if (!scrollRef.current) return;
@@ -66,7 +73,7 @@ const Testimonials = () => {
 
         {/* --- DESKTOP LAYOUT --- */}
         <div className="hide-on-mobile">
-          <h2 style={{ fontSize: '2rem', color: 'var(--color-primary)', marginBottom: '2rem' }}>Testimonials</h2>
+          <h2 style={{ fontSize: '2rem', color: 'var(--color-primary)', marginBottom: '2rem' }}>{testData.title}</h2>
           <div className="responsive-grid" style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
@@ -84,7 +91,7 @@ const Testimonials = () => {
 
         {/* --- MOBILE LAYOUT --- */}
         <div className="mobile-only-layout" style={{ width: '100%' }}>
-          <h2 style={{ fontSize: '2rem', color: 'var(--color-primary)', marginBottom: '1.5rem', textAlign: 'center' }}>Testimonials</h2>
+          <h2 style={{ fontSize: '2rem', color: 'var(--color-primary)', marginBottom: '1.5rem', textAlign: 'center' }}>{testData.title}</h2>
 
           <div ref={scrollRef} onScroll={handleScroll} className="mobile-features-carousel">
             {testimonials.map((t, idx) => (

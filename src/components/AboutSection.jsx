@@ -1,7 +1,21 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useSettings } from '../context/SettingsContext';
 
 const AboutSection = () => {
+  const { settings } = useSettings();
+  const aboutData = settings.pages?.home?.about || {
+    tagline: "About Vanguard Legal",
+    title: "Practical legal expertise for growing businesses",
+    desc: "Vanguard Legal provides clear, business-focused legal and compliance support for SMEs. We don’t just quote the law — we help you apply it commercially so you can manage legal risk, stay compliant, strengthen contracts, and make confident business decisions.",
+    bullets: [
+      "Practical compliance solutions without bureaucracy",
+      "Contracts that protect you but don't kill the deal",
+      "Risk mitigation integrated into your workflow"
+    ],
+    image: "/black-financial-consultant-explaining-deal-details.jpg"
+  };
+
   return (
     <section className="about-section" style={{
       position: 'relative',
@@ -26,7 +40,7 @@ const AboutSection = () => {
           left: 0,
           top: 0,
           width: '50%',
-          backgroundImage: 'url(/black-financial-consultant-explaining-deal-details.jpg)',
+          backgroundImage: `url(${aboutData.image})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           borderBottomRightRadius: '100px'
@@ -50,22 +64,16 @@ const AboutSection = () => {
           style={{ zIndex: 10, padding: '6rem 0' }}
         >
           <div style={{ fontSize: '0.9rem', color: 'var(--color-secondary-light)', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '1rem' }}>
-            About Vanguard Legal
+            {aboutData.tagline}
           </div>
           <h2 style={{ fontSize: '2.5rem', marginBottom: '1.5rem', color: 'white', lineHeight: 1.1 }}>
-            Practical legal expertise for growing businesses
+            {aboutData.title}
           </h2>
           <p style={{ fontSize: '1.1rem', marginBottom: '1.5rem', color: '#cbd5e1', lineHeight: 1.7 }}>
-            Vanguard Legal provides clear, business-focused legal and compliance support for SMEs.
-            We don’t just quote the law — we help you apply it commercially so you can manage legal risk,
-            stay compliant, strengthen contracts, and make confident business decisions.
+            {aboutData.desc}
           </p>
           <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '2rem' }}>
-            {[
-              'Practical compliance solutions without bureaucracy',
-              'Contracts that protect you but don\'t kill the deal',
-              'Risk mitigation integrated into your workflow'
-            ].map((item, i) => (
+            {aboutData.bullets?.map((item, i) => (
               <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '1.05rem', color: '#f8fafc' }}>
                 <div style={{
                   background: 'var(--color-secondary)',
@@ -86,6 +94,7 @@ const AboutSection = () => {
             ))}
           </ul>
         </motion.div>
+
 
       </div>
     </section>

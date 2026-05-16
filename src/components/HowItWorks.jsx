@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { useSettings } from '../context/SettingsContext';
 
 const Step = ({ num, title, delay, isMobile }) => (
   <motion.div
@@ -46,12 +47,18 @@ const Step = ({ num, title, delay, isMobile }) => (
 const HowItWorks = () => {
   const [activeIdx, setActiveIdx] = useState(0);
   const scrollRef = useRef(null);
+  const { settings } = useSettings();
 
-  const steps = [
-    { num: "1", title: "Book a consultation" },
-    { num: "2", title: "Receive a clear plan with scope and pricing" },
-    { num: "3", title: "We handle the legal side while you focus on your business" }
-  ];
+  const howData = settings.pages?.home?.howItWorks || {
+    title: "How It Works",
+    steps: [
+      { num: "1", title: "Book a consultation" },
+      { num: "2", title: "Receive a clear plan with scope and pricing" },
+      { num: "3", title: "We handle the legal side while you focus on your business" }
+    ]
+  };
+
+  const steps = howData.steps || [];
 
   const handleScroll = () => {
     if (!scrollRef.current) return;
@@ -71,7 +78,7 @@ const HowItWorks = () => {
         {/* --- DESKTOP LAYOUT --- */}
         <div className="hide-on-mobile">
           <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-            <h2 style={{ fontSize: '2rem', color: 'var(--color-primary)' }}>How It Works</h2>
+            <h2 style={{ fontSize: '2rem', color: 'var(--color-primary)' }}>{howData.title}</h2>
           </div>
 
           <div className="how-steps-container" style={{ display: 'flex', gap: '2rem', justifyContent: 'center', position: 'relative', maxWidth: '800px', margin: '0 auto' }}>
@@ -88,7 +95,7 @@ const HowItWorks = () => {
 
         {/* --- MOBILE LAYOUT --- */}
         <div className="mobile-only-layout" style={{ width: '100%' }}>
-          <h2 style={{ fontSize: '2rem', color: 'var(--color-primary)', marginBottom: '1.5rem', textAlign: 'center' }}>How It Works</h2>
+          <h2 style={{ fontSize: '2rem', color: 'var(--color-primary)', marginBottom: '1.5rem', textAlign: 'center' }}>{howData.title}</h2>
 
           <div ref={scrollRef} onScroll={handleScroll} className="mobile-features-carousel">
             {steps.map((step, idx) => (

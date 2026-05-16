@@ -34,6 +34,79 @@ export const SettingsProvider = ({ children }) => {
     },
     whatsappConfig: {
       greeting: 'Hi there! How can we help you today?',
+    },
+    pages: {
+      home: {
+        about: {
+          tagline: "About Vanguard Legal",
+          title: "Practical legal expertise for growing businesses",
+          desc: "Vanguard Legal provides clear, business-focused legal and compliance support for SMEs. We don’t just quote the law — we help you apply it commercially so you can manage legal risk, stay compliant, strengthen contracts, and make confident business decisions.",
+          bullets: [
+            "Practical compliance solutions without bureaucracy",
+            "Contracts that protect you but don't kill the deal",
+            "Risk mitigation integrated into your workflow"
+          ],
+          image: "/black-financial-consultant-explaining-deal-details.jpg"
+        },
+        features: {
+          title: "How We Help",
+          cards: [
+            { title: 'Contracts', desc: 'Clear, enforceable agreements that reduce disputes and risk.' },
+            { title: 'Compliance', desc: 'Stay on top of legal obligations without complexity.' },
+            { title: 'Advisory', desc: 'Practical guidance when you need it most.' },
+            { title: 'Strategy', desc: 'Helping you make decisions, not just interpret the law.' }
+          ],
+          whyTitle: "Why SMEs Choose Us",
+          whySubtitle: "Built for business owners",
+          reasons: [
+            'Fixed-fee pricing — no unexpected costs',
+            'Clear, practical advice without jargon',
+            'Fast turnaround times',
+            'Direct access to experienced legal support',
+            'Solutions aligned with how SMEs actually operate'
+          ]
+        },
+        howItWorks: {
+          title: "How It Works",
+          steps: [
+            { num: "1", title: "Book a consultation" },
+            { num: "2", title: "Receive a clear plan with scope and pricing" },
+            { num: "3", title: "We handle the legal side while you focus on your business" }
+          ]
+        },
+        testimonials: {
+          title: "Testimonials",
+          list: [
+            { quote: "Vanguard Legal helped us restructure a key agreement and avoid what could have become a serious dispute. The process was clear, efficient and practical.", author: "Founder", role: "SME in logistics" },
+            { quote: "We needed urgent help reviewing a supplier contract. The turnaround was quick and the advice highlighted risks we hadn't considered.", author: "Director", role: "Retail business" },
+            { quote: "Clear, practical advice without the legal jargon. It's like having a legal partner who understands how businesses actually work.", author: "SME owner", role: "Consulting sector" }
+          ]
+        },
+        cta: {
+          title: "Avoid costly legal mistakes as your business grows"
+        }
+      },
+      about: {
+        hero: {
+          title: "Practical legal support built for SMEs",
+          desc1: "Vanguard Legal exists to provide SMEs with clear, practical legal and compliance support that makes business sense.",
+          desc2: "We work closely with business owners to simplify complex legal requirements, manage risk and support confident decision-making as they grow.",
+          image: "/christina-wocintechchat-com-m-rg1y72eKw6o-unsplash.jpg"
+        },
+        experience: {
+          title: "Experience you can rely on",
+          desc: "With over a decade of experience advising businesses across multiple industries, we provide legal and compliance guidance that is practical, clear and commercially focused."
+        },
+        approach: {
+          title: "Our approach",
+          bullets: ['Practical, not theoretical', 'Proactive, not reactive', 'Clear and commercially focused'],
+          footerNote: "We focus on helping businesses get things right from the start — avoiding costly issues later."
+        },
+        cta: {
+          title: "Work with a legal partner who understands your business",
+          image: "/vitaly-gariev-h-v8A2ng0Oc-unsplash.jpg"
+        }
+      }
     }
   });
   const [loading, setLoading] = useState(true);

@@ -1,8 +1,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import ConsultButton from './ConsultButton.jsx';
+import { useSettings } from '../context/SettingsContext';
 
 const FinalCTA = ({ onNavigate, onContact }) => {
+  const { settings } = useSettings();
+  const ctaData = settings.pages?.home?.cta || {
+    title: "Avoid costly legal mistakes as your business grows"
+  };
+
   return (
     <section className="section-padding" style={{
       background: 'var(--color-primary)',
@@ -22,7 +28,7 @@ const FinalCTA = ({ onNavigate, onContact }) => {
           className="cta-title"
           style={{ fontSize: '2.5rem', marginBottom: '2.5rem', color: 'white', maxWidth: '700px', margin: '0 auto 2.5rem' }}
         >
-          Avoid costly legal mistakes as your business grows
+          {ctaData.title}
         </motion.h2>
 
         <motion.div
