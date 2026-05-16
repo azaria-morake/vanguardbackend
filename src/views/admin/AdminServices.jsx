@@ -1,9 +1,10 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
 import { collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { Plus, Edit, Trash2, X, Loader2, Save } from 'lucide-react';
 
-const AdminServices = () => {
+const AdminServices = ({ showSnackbar, confirmAction }) => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingService, setEditingService] = useState(null); // null, or service object for modal
@@ -36,15 +37,20 @@ const AdminServices = () => {
     setModalMode('edit');
   };
 
-  const handleDelete = async (id, title) => {
-    if (!window.confirm(`Are you sure you want to delete "${title}"?`)) return;
-    try {
-      await deleteDoc(doc(db, 'services', id));
-      setServices(prev => prev.filter(s => s.id !== id));
-    } catch (error) {
-      console.error("Error deleting service:", error);
-      alert("Failed to delete service.");
-    }
+  const handleDelete = (id, title) => {
+    confirmAction(
+      "Delete Service Package",
+      `Are you sure you want to permanently delete "${title}"? This action cannot be undone.`,
+      async () => {
+        try {
+          await deleteDoc(doc(db, 'services', id));
+          showSnackbar("Service package deleted successfully!", "success");
+        } catch (error) {
+          console.error("Error deleting service:", error);
+          showSnackbar("Failed to delete service package. Please check permissions.", "error");
+        }
+      }
+    );
   };
 
   const handleIncludeChange = (index, value) => {
@@ -83,16 +89,16 @@ const AdminServices = () => {
 
     try {
       if (modalMode === 'add') {
-        const docRef = await addDoc(collection(db, 'services'), serviceData);
-        setServices(prev => [...prev, { id: docRef.id, ...serviceData }]);
+        await addDoc(collection(db, 'services'), serviceData);
+        showSnackbar("Service package created successfully!", "success");
       } else {
         await updateDoc(doc(db, 'services', editingService.id), serviceData);
-        setServices(prev => prev.map(s => s.id === editingService.id ? { id: editingService.id, ...serviceData } : s));
+        showSnackbar("Service package updated successfully!", "success");
       }
       setEditingService(null);
     } catch (error) {
       console.error("Error saving service:", error);
-      alert("Failed to save service.");
+      showSnackbar("Failed to save service package.", "error");
     }
   };
 

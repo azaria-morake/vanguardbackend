@@ -2,7 +2,8 @@
 import { useState, useEffect } from 'react';
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../firebase';
-import { Settings, FileText, Briefcase, LogOut, Lock, Mail, Key, ShieldCheck, ExternalLink, Loader2 } from 'lucide-react';
+import { Settings, FileText, Briefcase, LogOut, Lock, Mail, Key, ShieldCheck, ExternalLink, Loader2, AlertTriangle, CheckCircle2, AlertCircle, Info } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import AdminSettings from './AdminSettings';
 import AdminArticles from './AdminArticles';
 import AdminServices from './AdminServices';
@@ -11,6 +12,24 @@ const AdminDashboard = ({ onNavigate }) => {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('articles'); // 'articles', 'services', 'settings'
+  const [snackbar, setSnackbar] = useState(null);
+  const [confirmDialog, setConfirmDialog] = useState(null);
+
+  const showSnackbar = (message, type = 'success') => {
+    setSnackbar({ message, type });
+    setTimeout(() => setSnackbar(null), 4000);
+  };
+
+  const confirmAction = (title, message, onConfirmAction) => {
+    setConfirmDialog({
+      title,
+      message,
+      onConfirm: async () => {
+        setConfirmDialog(null);
+        await onConfirmAction();
+      }
+    });
+  };
 
   // Login form state
   const [email, setEmail] = useState('');
@@ -216,11 +235,66 @@ const AdminDashboard = ({ onNavigate }) => {
         </header>
 
         <div className="admin-content">
-          {activeTab === 'articles' && <AdminArticles />}
-          {activeTab === 'services' && <AdminServices />}
-          {activeTab === 'settings' && <AdminSettings />}
+          {activeTab === 'articles' && <AdminArticles showSnackbar={showSnackbar} confirmAction={confirmAction} />}
+          {activeTab === 'services' && <AdminServices showSnackbar={showSnackbar} confirmAction={confirmAction} />}
+          {activeTab === 'settings' && <AdminSettings showSnackbar={showSnackbar} />}
         </div>
       </div>
+
+      {/* Confirmation Dialog Modal */}
+      <AnimatePresence>
+        {confirmDialog && (
+          <div style={{ position: 'fixed', inset: 0, zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)', padding: '1rem' }}>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '20px', width: '100%', maxWidth: '450px', padding: '2.5rem 2rem', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)', textAlign: 'center' }}
+            >
+              <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+                <AlertTriangle size={30} />
+              </div>
+              <h3 style={{ fontSize: '1.3rem', color: '#f8fafc', fontWeight: 700, marginBottom: '0.5rem' }}>{confirmDialog.title}</h3>
+              <p style={{ color: '#94a3b8', fontSize: '0.95rem', marginBottom: '2rem', lineHeight: 1.5 }}>{confirmDialog.message}</p>
+              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+                <button onClick={() => setConfirmDialog(null)} className="admin-btn admin-btn-secondary" style={{ flex: 1, padding: '0.75rem 1rem' }}>Cancel</button>
+                <button onClick={confirmDialog.onConfirm} className="admin-btn admin-btn-danger" style={{ flex: 1, padding: '0.75rem 1rem', fontWeight: 700 }}>Confirm Delete</button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Floating Snackbar Notification */}
+      <AnimatePresence>
+        {snackbar && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 50, scale: 0.9 }}
+            style={{
+              position: 'fixed',
+              bottom: '2.5rem',
+              right: '2.5rem',
+              zIndex: 9999999,
+              background: snackbar.type === 'error' ? '#ef4444' : snackbar.type === 'info' ? '#3b82f6' : '#14b8a6',
+              color: '#020617',
+              padding: '1rem 1.5rem',
+              borderRadius: '16px',
+              fontWeight: 700,
+              fontSize: '0.95rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
+              border: '1px solid rgba(255,255,255,0.2)'
+            }}
+          >
+            {snackbar.type === 'error' ? <AlertCircle size={20} /> : snackbar.type === 'info' ? <Info size={20} /> : <CheckCircle2 size={20} />}
+            <span>{snackbar.message}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

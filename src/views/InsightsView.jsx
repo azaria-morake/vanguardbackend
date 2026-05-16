@@ -4,6 +4,7 @@ import { X, Calendar, User, ArrowRight } from 'lucide-react';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '../firebase';
 import MDEditor from '@uiw/react-md-editor';
+import ConsultButton from '../components/ConsultButton.jsx';
 
 export const ArticleModal = ({ article, onClose, onContact }) => {
   if (!article) return null;
@@ -117,7 +118,12 @@ export const ArticleModal = ({ article, onClose, onContact }) => {
           <div style={{ marginTop: '3rem', padding: '2rem', background: 'var(--color-bg)', borderRadius: '16px', border: '1px solid var(--color-border)' }}>
             <h4 style={{ color: 'var(--color-primary)', marginBottom: '0.5rem', fontWeight: 700 }}>Want to discuss this further?</h4>
             <p style={{ fontSize: '0.9rem', opacity: 0.8, marginBottom: '1.5rem' }}>Our team is ready to help you navigate these legal complexities tailored to your business needs.</p>
-            <button className="btn btn-teal" onClick={() => { onContact('whatsapp'); onClose(); }}>Book a Consultation</button>
+            <ConsultButton 
+              direction="up" 
+              onSelectContact={(type) => { onContact(type); onClose(); }}
+            >
+              Book a Consultation
+            </ConsultButton>
           </div>
         </div>
       </motion.div>

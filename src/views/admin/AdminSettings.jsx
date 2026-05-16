@@ -1,10 +1,11 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { useSettings } from '../../context/SettingsContext';
 import { Save, Check, Loader2 } from 'lucide-react';
 
-const AdminSettings = () => {
+const AdminSettings = ({ showSnackbar }) => {
   const { settings, loading: contextLoading } = useSettings();
   const [formData, setFormData] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -49,14 +50,16 @@ const AdminSettings = () => {
     try {
       await setDoc(doc(db, 'siteSettings', 'main'), formData, { merge: true });
       setSuccess(true);
+      showSnackbar("Site settings saved successfully!", "success");
       setTimeout(() => setSuccess(false), 3000);
     } catch (error) {
       console.error("Error saving settings:", error);
-      alert("Failed to save settings. Check console or permissions.");
+      showSnackbar("Failed to save settings. Check permissions.", "error");
     } finally {
       setSaving(false);
     }
   };
+
 
   if (contextLoading || !formData) {
     return (

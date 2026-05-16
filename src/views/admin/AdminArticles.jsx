@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
 import { collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -5,7 +6,7 @@ import { db, storage } from '../../firebase';
 import { Plus, Edit, Trash2, X, Loader2, Save, Image as ImageIcon, Star, Maximize2, Check } from 'lucide-react';
 import MDEditor from '@uiw/react-md-editor';
 
-const AdminArticles = () => {
+const AdminArticles = ({ showSnackbar, confirmAction }) => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingArticle, setEditingArticle] = useState(null);
@@ -47,15 +48,20 @@ const AdminArticles = () => {
     setModalMode('edit');
   };
 
-  const handleDelete = async (id, title) => {
-    if (!window.confirm(`Are you sure you want to delete "${title}"?`)) return;
-    try {
-      await deleteDoc(doc(db, 'articles', id));
-      setArticles(prev => prev.filter(a => a.id !== id));
-    } catch (error) {
-      console.error("Error deleting article:", error);
-      alert("Failed to delete article.");
-    }
+  const handleDelete = (id, title) => {
+    confirmAction(
+      "Delete Insight",
+      `Are you sure you want to permanently delete "${title}"? This action cannot be undone.`,
+      async () => {
+        try {
+          await deleteDoc(doc(db, 'articles', id));
+          showSnackbar("Insight deleted successfully!", "success");
+        } catch (error) {
+          console.error("Error deleting article:", error);
+          showSnackbar("Failed to delete insight. Please check permissions.", "error");
+        }
+      }
+    );
   };
 
   const handleImageUpload = async (e) => {
@@ -68,9 +74,10 @@ const AdminArticles = () => {
       await uploadBytes(storageRef, file);
       const url = await getDownloadURL(storageRef);
       setEditingArticle(prev => ({ ...prev, image: url }));
+      showSnackbar("Image uploaded successfully!", "success");
     } catch (error) {
       console.error("Error uploading image:", error);
-      alert("Failed to upload image.");
+      showSnackbar("Failed to upload image. Please check storage rules.", "error");
     } finally {
       setUploadingImage(false);
     }
@@ -88,16 +95,16 @@ const AdminArticles = () => {
 
     try {
       if (modalMode === 'add') {
-        const docRef = await addDoc(collection(db, 'articles'), articleData);
-        setArticles(prev => [{ id: docRef.id, ...articleData }, ...prev]);
+        await addDoc(collection(db, 'articles'), articleData);
+        showSnackbar("Insight published successfully!", "success");
       } else {
         await updateDoc(doc(db, 'articles', editingArticle.id), articleData);
-        setArticles(prev => prev.map(a => a.id === editingArticle.id ? { id: editingArticle.id, ...articleData } : a));
+        showSnackbar("Insight updated successfully!", "success");
       }
       setEditingArticle(null);
     } catch (error) {
       console.error("Error saving article:", error);
-      alert("Failed to save article.");
+      showSnackbar("Failed to save insight.", "error");
     }
   };
 
