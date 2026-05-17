@@ -1,16 +1,18 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
 import { doc, setDoc } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+import { db, storage } from '../../firebase';
 import { useSettings } from '../../context/SettingsContext';
-import { Save, Check, Loader2 } from 'lucide-react';
+import { Save, Check, Loader2, Image as ImageIcon } from 'lucide-react';
 
 const AdminSettings = ({ showSnackbar }) => {
   const { settings, loading: contextLoading } = useSettings();
   const [formData, setFormData] = useState(null);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [activeTab, setActiveTab] = useState('contact'); // contact, socials, heros
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [activeTab, setActiveTab] = useState('contact'); // contact, socials, homeHero
 
   useEffect(() => {
     if (!contextLoading && settings && !formData) {
@@ -28,17 +30,64 @@ const AdminSettings = ({ showSnackbar }) => {
     }));
   };
 
-  const handleHeroChange = (page, field, value) => {
+  const handleHeroChange = (field, value) => {
     setFormData(prev => ({
       ...prev,
       heros: {
         ...prev.heros,
-        [page]: {
-          ...prev.heros[page],
+        home: {
+          ...prev.heros?.home,
           [field]: value
         }
       }
     }));
+  };
+
+  const handleHeroImageUpload = async (e, field) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const oldUrl = formData.heros?.home?.[field];
+    setUploadingImage(true);
+    try {
+      const storageRef = ref(storage, `images/heros/${Date.now()}_${file.name}`);
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+      
+      if (oldUrl && oldUrl.includes('firebasestorage')) {
+        try {
+          await deleteObject(ref(storage, oldUrl));
+          console.log("Old home hero image deleted:", oldUrl);
+        } catch (err) {
+          console.warn("Could not delete old image:", err);
+        }
+      }
+
+      setFormData(prev => {
+        const updated = {
+          ...prev,
+          heros: {
+            ...prev.heros,
+            home: {
+              ...prev.heros?.home,
+              [field]: url
+            }
+          }
+        };
+        setDoc(doc(db, 'siteSettings', 'main'), { heros: updated.heros }, { merge: true })
+          .then(() => showSnackbar("Hero image uploaded and saved successfully!", "success"))
+          .catch(err => {
+            console.error("Error saving hero image:", err);
+            showSnackbar("Image uploaded but failed to save to database.", "error");
+          });
+        return updated;
+      });
+    } catch (error) {
+      console.error("Error uploading hero image:", error);
+      showSnackbar("Failed to upload image. Check permissions.", "error");
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const handleSave = async (e) => {
@@ -74,7 +123,7 @@ const AdminSettings = ({ showSnackbar }) => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <div>
           <h1 style={{ fontSize: '1.8rem', color: '#f8fafc', marginBottom: '0.25rem' }}>Site Settings Manager</h1>
-          <p style={{ color: '#94a3b8', fontSize: '0.95rem' }}>Update global contact details, social links, and hero banners across all pages.</p>
+          <p style={{ color: '#94a3b8', fontSize: '0.95rem' }}>Update global contact details, social links, and the Home page hero banner.</p>
         </div>
         <button
           onClick={handleSave}
@@ -88,23 +137,28 @@ const AdminSettings = ({ showSnackbar }) => {
 
       {/* Tabs */}
       <div style={{ display: 'flex', gap: '1rem', borderBottom: '1px solid #1e293b', marginBottom: '2rem', paddingBottom: '0.5rem' }}>
-        {['contact', 'socials', 'heros'].map((tab) => (
+        {[
+          { id: 'contact', label: 'Contact Info' },
+          { id: 'socials', label: 'Social Media' },
+          { id: 'homeHero', label: 'Home Hero Banner' }
+        ].map((tab) => (
           <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
+            key={tab.id}
+            type="button"
+            onClick={() => setActiveTab(tab.id)}
             style={{
               padding: '0.75rem 1.5rem',
               borderRadius: '8px',
               fontWeight: 600,
               fontSize: '0.95rem',
-              color: activeTab === tab ? '#14b8a6' : '#94a3b8',
-              backgroundColor: activeTab === tab ? 'rgba(20, 184, 166, 0.1)' : 'transparent',
+              color: activeTab === tab.id ? '#14b8a6' : '#94a3b8',
+              backgroundColor: activeTab === tab.id ? 'rgba(20, 184, 166, 0.1)' : 'transparent',
               border: 'none',
               cursor: 'pointer',
               transition: 'all 0.2s'
             }}
           >
-            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            {tab.label}
           </button>
         ))}
       </div>
@@ -196,35 +250,66 @@ const AdminSettings = ({ showSnackbar }) => {
         )}
 
         {/* Heros Tab */}
-        {activeTab === 'heros' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            {['home', 'about', 'services', 'insights', 'contact'].map((page) => (
-              <div key={page} className="admin-card" style={{ marginBottom: 0 }}>
-                <h3 style={{ fontSize: '1.15rem', color: '#14b8a6', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1.25rem' }}>
-                  {page} Page Banner
-                </h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '0.5rem', fontWeight: 600 }}>Main Title</label>
+        {activeTab === 'homeHero' && (
+          <div className="admin-card" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            <h2 style={{ fontSize: '1.25rem', color: '#14b8a6', marginBottom: '0.5rem' }}>Home Page Hero Banner</h2>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '0.5rem', fontWeight: 600 }}>Main Title</label>
+                <input
+                  type="text"
+                  value={formData.heros?.home?.title || ''}
+                  onChange={(e) => handleHeroChange('title', e.target.value)}
+                  className="admin-input"
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '0.5rem', fontWeight: 600 }}>Subtitle Description</label>
+                <input
+                  type="text"
+                  value={formData.heros?.home?.subtitle || ''}
+                  onChange={(e) => handleHeroChange('subtitle', e.target.value)}
+                  className="admin-input"
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '0.5rem', fontWeight: 600 }}>Credibility Strip Bar Text</label>
+                <input
+                  type="text"
+                  value={formData.heros?.home?.credibilityStrip || ''}
+                  onChange={(e) => handleHeroChange('credibilityStrip', e.target.value)}
+                  className="admin-input"
+                  placeholder="e.g. Attorney-led legal support for SMEs across South Africa"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '0.5rem', fontWeight: 600 }}>Hero Background Image</label>
+              <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                {formData.heros?.home?.image && (
+                  <img
+                    src={formData.heros.home.image}
+                    alt="Home hero preview"
+                    style={{ width: '160px', height: '110px', objectFit: 'cover', borderRadius: '12px', border: '2px solid #334155' }}
+                  />
+                )}
+                <div style={{ flex: 1, minWidth: '220px' }}>
+                  <label className="admin-btn admin-btn-secondary" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', padding: '0.75rem 1.25rem' }}>
+                    {uploadingImage ? <Loader2 className="animate-spin" size={18} /> : <ImageIcon size={18} />}
+                    {uploadingImage ? 'Uploading Image...' : 'Replace Image'}
                     <input
-                      type="text"
-                      value={formData.heros?.[page]?.title || ''}
-                      onChange={(e) => handleHeroChange(page, 'title', e.target.value)}
-                      className="admin-input"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleHeroImageUpload(e, 'image')}
+                      style={{ display: 'none' }}
+                      disabled={uploadingImage}
                     />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '0.5rem', fontWeight: 600 }}>Subtitle</label>
-                    <input
-                      type="text"
-                      value={formData.heros?.[page]?.subtitle || ''}
-                      onChange={(e) => handleHeroChange(page, 'subtitle', e.target.value)}
-                      className="admin-input"
-                    />
-                  </div>
+                  </label>
                 </div>
               </div>
-            ))}
+            </div>
           </div>
         )}
       </form>

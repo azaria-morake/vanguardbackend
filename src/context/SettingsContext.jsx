@@ -29,7 +29,8 @@ export const SettingsProvider = ({ children }) => {
       home: {
         title: 'Legal Protection for your Business',
         subtitle: 'Built for SMEs across South Africa.',
-        image: '/hero-bg.jpg'
+        credibilityStrip: 'Attorney-led legal support for SMEs across South Africa',
+        image: '/hero.jpg'
       }
     },
     whatsappConfig: {

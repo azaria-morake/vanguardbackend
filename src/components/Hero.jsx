@@ -6,7 +6,7 @@ import { useSettings } from '../context/SettingsContext.jsx';
 
 const Hero = ({ onNavigate, onContact }) => {
   const { settings } = useSettings();
-  const { title, subtitle } = settings.heros.home;
+  const { title, subtitle, image, credibilityStrip } = settings.heros.home;
 
   return (
     <>
@@ -77,13 +77,12 @@ const Hero = ({ onNavigate, onContact }) => {
               right: 0,
               top: 0,
               width: '45%',
-              backgroundImage: 'url(/hero.jpg)',
+              backgroundImage: `url(${image || '/hero.jpg'})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               borderBottomLeftRadius: '100px'
             }}
           >
-            {/* The image spans the right half full bleed with a graphic overlay if we wanted */}
             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 25%)' }}></div>
           </motion.div>
 
@@ -102,7 +101,7 @@ const Hero = ({ onNavigate, onContact }) => {
           textAlign: 'center'
         }}>
           <ShieldCheck size={24} color="var(--color-border)" style={{ opacity: 0.8, flexShrink: 0 }} />
-          <span>Attorney-led legal support for SMEs across South Africa</span>
+          <span>{credibilityStrip || 'Attorney-led legal support for SMEs across South Africa'}</span>
           <Truck size={24} color="var(--color-border)" style={{ opacity: 0.8, flexShrink: 0 }} />
         </div>
       </div>
