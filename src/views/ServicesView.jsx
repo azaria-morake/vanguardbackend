@@ -178,7 +178,7 @@ const ServicesView = ({ onNavigate, onContact, isMobile }) => {
                 <>
                   <button
                     onClick={() => scrollCarousel('left')}
-                    style={{ ...arrowButtonStyle, left: '-40px' }}
+                    style={{ ...arrowButtonStyle, left: '-60px' }}
                     onMouseEnter={e => { e.currentTarget.style.background = 'var(--color-secondary)'; e.currentTarget.style.color = 'white'; }}
                     onMouseLeave={e => { e.currentTarget.style.background = 'white'; e.currentTarget.style.color = 'var(--color-primary)'; }}
                   >
@@ -186,7 +186,7 @@ const ServicesView = ({ onNavigate, onContact, isMobile }) => {
                   </button>
                   <button
                     onClick={() => scrollCarousel('right')}
-                    style={{ ...arrowButtonStyle, right: '-40px' }}
+                    style={{ ...arrowButtonStyle, right: '-60px' }}
                     onMouseEnter={e => { e.currentTarget.style.background = 'var(--color-secondary)'; e.currentTarget.style.color = 'white'; }}
                     onMouseLeave={e => { e.currentTarget.style.background = 'white'; e.currentTarget.style.color = 'var(--color-primary)'; }}
                   >
@@ -200,13 +200,13 @@ const ServicesView = ({ onNavigate, onContact, isMobile }) => {
                 onScroll={handleScroll}
                 className="mobile-features-carousel"
                 style={{
-                  padding: '1rem 0',
+                  padding: isMobile ? '1rem 0' : '1rem 1.5rem',
                   gap: '0',
                   alignItems: 'stretch',
                   justifyContent: 'flex-start',
                   display: 'flex',
-                  maskImage: 'linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%)',
-                  WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%)'
+                  maskImage: 'linear-gradient(to right, transparent 0%, black 1.5%, black 98.5%, transparent 100%)',
+                  WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 1.5%, black 98.5%, transparent 100%)'
                 }}
               >
                 {services.map((svc, i) => (
