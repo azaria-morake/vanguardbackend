@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
 import { collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { db, storage } from '../../firebase';
 import { Plus, Edit, Trash2, X, Loader2, Save, Image as ImageIcon, Star, Maximize2, Check } from 'lucide-react';
 import MDEditor from '@uiw/react-md-editor';
@@ -54,6 +54,15 @@ const AdminArticles = ({ showSnackbar, confirmAction }) => {
       `Are you sure you want to permanently delete "${title}"? This action cannot be undone.`,
       async () => {
         try {
+          const articleToDelete = articles.find(a => a.id === id);
+          if (articleToDelete?.image?.includes('firebasestorage')) {
+            try {
+              await deleteObject(ref(storage, articleToDelete.image));
+              console.log("Deleted article cover image from storage.");
+            } catch (err) {
+              console.warn("Could not delete article image from storage:", err);
+            }
+          }
           await deleteDoc(doc(db, 'articles', id));
           showSnackbar("Insight deleted successfully!", "success");
         } catch (error) {
@@ -68,11 +77,22 @@ const AdminArticles = ({ showSnackbar, confirmAction }) => {
     const file = e.target.files[0];
     if (!file) return;
 
+    const oldUrl = editingArticle?.image;
     setUploadingImage(true);
     try {
       const storageRef = ref(storage, `images/articles/${Date.now()}_${file.name}`);
       await uploadBytes(storageRef, file);
       const url = await getDownloadURL(storageRef);
+
+      if (oldUrl && oldUrl.includes('firebasestorage')) {
+        try {
+          await deleteObject(ref(storage, oldUrl));
+          console.log("Deleted old article image from storage.");
+        } catch (err) {
+          console.warn("Could not delete old article image from storage:", err);
+        }
+      }
+
       setEditingArticle(prev => ({ ...prev, image: url }));
       showSnackbar("Image uploaded successfully!", "success");
     } catch (error) {

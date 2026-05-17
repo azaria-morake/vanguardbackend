@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
 import { doc, setDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { db, storage } from '../../firebase';
 import { useSettings } from '../../context/SettingsContext';
 import { Save, Loader2, Image as ImageIcon, FileText, Layout } from 'lucide-react';
@@ -86,12 +86,22 @@ const AdminPages = ({ showSnackbar }) => {
     const file = e.target.files[0];
     if (!file) return;
 
+    const oldUrl = formData[page]?.[section]?.[field];
     setUploadingImage(true);
     try {
       const storageRef = ref(storage, `images/pages/${Date.now()}_${file.name}`);
       await uploadBytes(storageRef, file);
       const url = await getDownloadURL(storageRef);
       
+      if (oldUrl && oldUrl.includes('firebasestorage')) {
+        try {
+          await deleteObject(ref(storage, oldUrl));
+          console.log("Old page image successfully deleted from storage:", oldUrl);
+        } catch (delErr) {
+          console.warn("Could not delete old image from storage:", delErr);
+        }
+      }
+
       // Update local state and instantly save to Firestore
       setFormData(prev => {
         const updated = {
