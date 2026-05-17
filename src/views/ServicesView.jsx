@@ -203,7 +203,7 @@ const ServicesView = ({ onNavigate, onContact, isMobile }) => {
                   padding: '1rem 0',
                   gap: '0',
                   alignItems: 'stretch',
-                  justifyContent: isMobile ? 'flex-start' : 'center',
+                  justifyContent: 'flex-start',
                   display: 'flex'
                 }}
               >
