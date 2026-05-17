@@ -8,7 +8,6 @@ import { db } from '../firebase';
 import { useSettings } from '../context/SettingsContext.jsx';
 
 const ServiceCategory = ({ title, desc, includes, delay, isMobile }) => (
-// ... (omitting ServiceCategory content as it stays same, but I must provide full ReplacementContent for the range)
   <motion.div
     initial={isMobile ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
     whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
@@ -16,10 +15,10 @@ const ServiceCategory = ({ title, desc, includes, delay, isMobile }) => (
     transition={{ duration: 0.4, delay: isMobile ? 0 : delay }}
     className="flat-card"
     style={{
-      padding: '2.5rem',
+      padding: '2.5rem 1.75rem',
       display: 'flex',
       flexDirection: 'column',
-      width: isMobile ? '95%' : '350px',
+      width: isMobile ? '95%' : '360px',
       margin: isMobile ? '0 auto' : '0 1rem',
       boxSizing: 'border-box',
       flexShrink: 0,
@@ -27,7 +26,7 @@ const ServiceCategory = ({ title, desc, includes, delay, isMobile }) => (
       minHeight: isMobile ? '380px' : '450px'
     }}
   >
-    <div style={{ minHeight: '110px', marginBottom: '1.5rem' }}>
+    <div style={{ minHeight: '125px', marginBottom: '1.5rem' }}>
       <h3 style={{ fontSize: '1.4rem', color: 'var(--color-primary)', marginBottom: '0.75rem' }}>{title}</h3>
       <p style={{ color: 'var(--color-text)', fontSize: '0.95rem', lineHeight: 1.5 }}>{desc}</p>
     </div>
