@@ -204,7 +204,9 @@ const ServicesView = ({ onNavigate, onContact, isMobile }) => {
                   gap: '0',
                   alignItems: 'stretch',
                   justifyContent: 'flex-start',
-                  display: 'flex'
+                  display: 'flex',
+                  maskImage: 'linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%)',
+                  WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%)'
                 }}
               >
                 {services.map((svc, i) => (
