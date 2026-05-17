@@ -15,11 +15,11 @@ const ServiceCategory = ({ title, desc, includes, delay, isMobile }) => (
     transition={{ duration: 0.4, delay: isMobile ? 0 : delay }}
     className="flat-card"
     style={{
-      padding: '2.5rem 1.75rem',
+      padding: '2.5rem 1.5rem',
       display: 'flex',
       flexDirection: 'column',
-      width: isMobile ? '95%' : '360px',
-      margin: isMobile ? '0 auto' : '0 1rem',
+      width: isMobile ? '95%' : '345px',
+      margin: isMobile ? '0 auto' : '0 0.75rem',
       boxSizing: 'border-box',
       flexShrink: 0,
       height: '100%',
@@ -203,6 +203,7 @@ const ServicesView = ({ onNavigate, onContact, isMobile }) => {
                   padding: '1rem 0',
                   gap: '0',
                   alignItems: 'stretch',
+                  justifyContent: isMobile ? 'flex-start' : 'center',
                   display: 'flex'
                 }}
               >
