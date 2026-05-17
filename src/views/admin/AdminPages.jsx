@@ -10,8 +10,15 @@ const AdminPages = ({ showSnackbar }) => {
   const { settings, loading: contextLoading } = useSettings();
   const [formData, setFormData] = useState(null);
   const [saving, setSaving] = useState(false);
-  const [activePageTab, setActivePageTab] = useState('home'); // 'home' or 'about'
+  const [activePageTab, setActivePageTab] = useState(() => {
+    return localStorage.getItem('vanguard_admin_pages_tab') || 'home';
+  }); // 'home', 'about', 'services', 'insights', 'contact'
   const [uploadingImage, setUploadingImage] = useState(false);
+
+  const handlePageTabChange = (tab) => {
+    setActivePageTab(tab);
+    localStorage.setItem('vanguard_admin_pages_tab', tab);
+  };
 
   useEffect(() => {
     if (!contextLoading && settings?.pages && !formData) {
@@ -171,7 +178,7 @@ const AdminPages = ({ showSnackbar }) => {
       {/* Sub-Tabs for selecting page */}
       <div style={{ display: 'flex', gap: '0.75rem', borderBottom: '1px solid #334155', paddingBottom: '1rem', marginBottom: '2.5rem' }}>
         <button
-          onClick={() => setActivePageTab('home')}
+          onClick={() => handlePageTabChange('home')}
           style={{
             padding: '0.75rem 1.5rem',
             borderRadius: '12px',
@@ -187,7 +194,7 @@ const AdminPages = ({ showSnackbar }) => {
           {/* 🏠 */}  Home Page Content
         </button>
         <button
-          onClick={() => setActivePageTab('about')}
+          onClick={() => handlePageTabChange('about')}
           style={{
             padding: '0.75rem 1.5rem',
             borderRadius: '12px',
@@ -203,7 +210,7 @@ const AdminPages = ({ showSnackbar }) => {
           {/* 📖 */}  About Page Content
         </button>
         <button
-          onClick={() => setActivePageTab('services')}
+          onClick={() => handlePageTabChange('services')}
           style={{
             padding: '0.75rem 1.5rem',
             borderRadius: '12px',
@@ -219,7 +226,7 @@ const AdminPages = ({ showSnackbar }) => {
           {/* 💼 */}  Services Page Content
         </button>
         <button
-          onClick={() => setActivePageTab('insights')}
+          onClick={() => handlePageTabChange('insights')}
           style={{
             padding: '0.75rem 1.5rem',
             borderRadius: '12px',
@@ -235,7 +242,7 @@ const AdminPages = ({ showSnackbar }) => {
           {/* 📰 */} Insights Page Content
         </button>
         <button
-          onClick={() => setActivePageTab('contact')}
+          onClick={() => handlePageTabChange('contact')}
           style={{
             padding: '0.75rem 1.5rem',
             borderRadius: '12px',

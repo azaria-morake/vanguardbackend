@@ -12,7 +12,14 @@ const AdminSettings = ({ showSnackbar }) => {
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
-  const [activeTab, setActiveTab] = useState('contact'); // contact, socials, homeHero
+  const [activeTab, setActiveTab] = useState(() => {
+    return localStorage.getItem('vanguard_admin_settings_tab') || 'contact';
+  }); // contact, socials, homeHero
+
+  const handleSettingsTabChange = (tab) => {
+    setActiveTab(tab);
+    localStorage.setItem('vanguard_admin_settings_tab', tab);
+  };
 
   useEffect(() => {
     if (!contextLoading && settings && !formData) {
@@ -145,7 +152,7 @@ const AdminSettings = ({ showSnackbar }) => {
           <button
             key={tab.id}
             type="button"
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => handleSettingsTabChange(tab.id)}
             style={{
               padding: '0.75rem 1.5rem',
               borderRadius: '8px',

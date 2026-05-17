@@ -12,7 +12,14 @@ import AdminPages from './AdminPages';
 const AdminDashboard = ({ onNavigate }) => {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('pages'); // 'pages', 'articles', 'services', 'settings'
+  const [activeTab, setActiveTab] = useState(() => {
+    return localStorage.getItem('vanguard_admin_main_tab') || 'pages';
+  }); // 'pages', 'articles', 'services', 'settings'
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    localStorage.setItem('vanguard_admin_main_tab', tab);
+  };
   const [snackbar, setSnackbar] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
 
@@ -192,7 +199,7 @@ const AdminDashboard = ({ onNavigate }) => {
 
         <nav className="admin-nav">
           <div
-            onClick={() => setActiveTab('pages')}
+            onClick={() => handleTabChange('pages')}
             className={`admin-nav-item ${activeTab === 'pages' ? 'active' : ''}`}
           >
             <Layout size={20} />
@@ -200,7 +207,7 @@ const AdminDashboard = ({ onNavigate }) => {
           </div>
 
           <div
-            onClick={() => setActiveTab('articles')}
+            onClick={() => handleTabChange('articles')}
             className={`admin-nav-item ${activeTab === 'articles' ? 'active' : ''}`}
           >
             <FileText size={20} />
@@ -208,7 +215,7 @@ const AdminDashboard = ({ onNavigate }) => {
           </div>
 
           <div
-            onClick={() => setActiveTab('services')}
+            onClick={() => handleTabChange('services')}
             className={`admin-nav-item ${activeTab === 'services' ? 'active' : ''}`}
           >
             <Briefcase size={20} />
@@ -216,7 +223,7 @@ const AdminDashboard = ({ onNavigate }) => {
           </div>
 
           <div
-            onClick={() => setActiveTab('settings')}
+            onClick={() => handleTabChange('settings')}
             className={`admin-nav-item ${activeTab === 'settings' ? 'active' : ''}`}
           >
             <Settings size={20} />
