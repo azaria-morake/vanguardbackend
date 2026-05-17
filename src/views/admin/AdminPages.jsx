@@ -14,10 +14,10 @@ const AdminPages = ({ showSnackbar }) => {
   const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
-    if (settings?.pages && !formData) {
+    if (!contextLoading && settings?.pages && !formData) {
       setFormData(JSON.parse(JSON.stringify(settings.pages)));
     }
-  }, [settings, formData]);
+  }, [contextLoading, settings, formData]);
 
   if (contextLoading || !formData) {
     return (
@@ -91,8 +91,29 @@ const AdminPages = ({ showSnackbar }) => {
       const storageRef = ref(storage, `images/pages/${Date.now()}_${file.name}`);
       await uploadBytes(storageRef, file);
       const url = await getDownloadURL(storageRef);
-      handleTextChange(page, section, field, url);
-      showSnackbar("Section image updated successfully!", "success");
+      
+      // Update local state and instantly save to Firestore
+      setFormData(prev => {
+        const updated = {
+          ...prev,
+          [page]: {
+            ...prev[page],
+            [section]: {
+              ...prev[page][section],
+              [field]: url
+            }
+          }
+        };
+        setDoc(doc(db, 'siteSettings', 'main'), { pages: updated }, { merge: true })
+          .then(() => {
+            showSnackbar("Section image uploaded and saved successfully!", "success");
+          })
+          .catch((err) => {
+            console.error("Error saving image to settings:", err);
+            showSnackbar("Image uploaded but failed to save to database.", "error");
+          });
+        return updated;
+      });
     } catch (error) {
       console.error("Error uploading image:", error);
       showSnackbar("Failed to upload image. Check storage rules.", "error");

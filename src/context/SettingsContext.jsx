@@ -113,9 +113,41 @@ export const SettingsProvider = ({ children }) => {
 
   useEffect(() => {
     // Listen to the siteSettings document in Firestore
-    const unsubscribe = onSnapshot(doc(db, 'siteSettings', 'main'), (doc) => {
-      if (doc.exists()) {
-        setSettings(prev => ({ ...prev, ...doc.data() }));
+    const unsubscribe = onSnapshot(doc(db, 'siteSettings', 'main'), (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setSettings(prev => {
+          const mergedPages = {
+            ...prev.pages,
+            ...(data.pages || {})
+          };
+          if (data.pages?.home) {
+            mergedPages.home = {
+              ...prev.pages.home,
+              ...data.pages.home,
+              about: { ...prev.pages.home?.about, ...data.pages.home?.about },
+              features: { ...prev.pages.home?.features, ...data.pages.home?.features },
+              howItWorks: { ...prev.pages.home?.howItWorks, ...data.pages.home?.howItWorks },
+              testimonials: { ...prev.pages.home?.testimonials, ...data.pages.home?.testimonials },
+              cta: { ...prev.pages.home?.cta, ...data.pages.home?.cta }
+            };
+          }
+          if (data.pages?.about) {
+            mergedPages.about = {
+              ...prev.pages.about,
+              ...data.pages.about,
+              hero: { ...prev.pages.about?.hero, ...data.pages.about?.hero },
+              experience: { ...prev.pages.about?.experience, ...data.pages.about?.experience },
+              approach: { ...prev.pages.about?.approach, ...data.pages.about?.approach },
+              cta: { ...prev.pages.about?.cta, ...data.pages.about?.cta }
+            };
+          }
+          return {
+            ...prev,
+            ...data,
+            pages: mergedPages
+          };
+        });
       }
       setLoading(false);
     }, (error) => {

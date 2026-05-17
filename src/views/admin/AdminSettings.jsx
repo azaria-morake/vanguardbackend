@@ -13,10 +13,10 @@ const AdminSettings = ({ showSnackbar }) => {
   const [activeTab, setActiveTab] = useState('contact'); // contact, socials, heros
 
   useEffect(() => {
-    if (settings && !formData) {
+    if (!contextLoading && settings && !formData) {
       setFormData(JSON.parse(JSON.stringify(settings)));
     }
-  }, [settings, formData]);
+  }, [contextLoading, settings, formData]);
 
   const handleNestedChange = (category, field, value) => {
     setFormData(prev => ({
