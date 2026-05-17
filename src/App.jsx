@@ -25,7 +25,7 @@ import InsightsView, { ArticleModal } from './views/InsightsView.jsx'
 import AdminDashboard from './views/admin/AdminDashboard.jsx'
 
 function App() {
-  const { settings } = useSettings();
+  const { settings, loading } = useSettings();
 // ... (omitting App body)
   // Initialize from hash or default to home
   const [activeView, setActiveView] = useState(() => {
@@ -90,6 +90,14 @@ function App() {
     { id: 'insights', label: 'Insights' },
     { id: 'contact', label: 'Contact' }
   ];
+
+  if (loading) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg)' }}>
+        <div style={{ width: '40px', height: '40px', borderRadius: '50%', border: '3px solid rgba(15, 23, 42, 0.1)', borderTopColor: 'var(--color-primary)', animation: 'spin 1s linear infinite' }} />
+      </div>
+    );
+  }
 
   return (
 // ... (omitting return body for range)
