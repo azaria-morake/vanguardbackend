@@ -6,6 +6,14 @@ import { useSettings } from '../context/SettingsContext.jsx';
 
 const ContactView = ({ onContact }) => {
   const { settings } = useSettings();
+  const pageData = settings?.pages?.contact || {
+    hero: {
+      title: "Let’s discuss your legal needs",
+      desc: "Tell us about your business and we’ll guide you on the best next steps.",
+      image: "/discussion.png"
+    }
+  };
+
   const [formData, setFormData] = React.useState({
     name: '',
     email: '',
@@ -43,7 +51,7 @@ const ContactView = ({ onContact }) => {
               transition={{ duration: 0.5 }}
               style={{ fontSize: '3rem', color: 'var(--color-primary)', marginBottom: '1.5rem', lineHeight: 1.1 }}
             >
-              Let’s discuss your legal needs
+              {pageData.hero?.title}
             </motion.h1>
 
             <motion.p
@@ -52,7 +60,7 @@ const ContactView = ({ onContact }) => {
               transition={{ duration: 0.5, delay: 0.1 }}
               style={{ fontSize: '1.15rem', color: 'var(--color-text)', marginBottom: '3rem', maxWidth: '450px' }}
             >
-              Tell us about your business and we’ll guide you on the best next steps.
+              {pageData.hero?.desc}
             </motion.p>
 
             <motion.div
@@ -149,7 +157,7 @@ const ContactView = ({ onContact }) => {
               right: 0,
               top: 0,
               width: '45%',
-              backgroundImage: 'url(/discussion.png)',
+              backgroundImage: `url(${pageData.hero?.image})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               borderBottomLeftRadius: '60px'

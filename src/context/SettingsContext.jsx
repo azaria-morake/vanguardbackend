@@ -106,6 +106,33 @@ export const SettingsProvider = ({ children }) => {
           title: "Work with a legal partner who understands your business",
           image: "/vitaly-gariev-h-v8A2ng0Oc-unsplash.jpg"
         }
+      },
+      services: {
+        hero: {
+          title: "Legal support for every stage of your business",
+          desc: "Clear, practical legal and compliance support designed for SMEs.",
+          image: "/services.png"
+        },
+        cta: {
+          title: "Clear and transparent pricing",
+          bullets: ["Fixed-fee services where possible", "Upfront pricing clarity", "No unnecessary hourly billing"],
+          subtitle: "Not sure where to start? We'll guide you.",
+          image: "/dimitri-karastelev-ZH4FUYiaczY-unsplash.jpg"
+        }
+      },
+      insights: {
+        hero: {
+          title: "Insights",
+          desc: "Expert legal perspectives and strategic guidance tailored for South African business growth.",
+          image: "/insights/insights-hero.png"
+        }
+      },
+      contact: {
+        hero: {
+          title: "Let’s discuss your legal needs",
+          desc: "Tell us about your business and we’ll guide you on the best next steps.",
+          image: "/discussion.png"
+        }
       }
     }
   });
@@ -140,6 +167,28 @@ export const SettingsProvider = ({ children }) => {
               experience: { ...prev.pages.about?.experience, ...data.pages.about?.experience },
               approach: { ...prev.pages.about?.approach, ...data.pages.about?.approach },
               cta: { ...prev.pages.about?.cta, ...data.pages.about?.cta }
+            };
+          }
+          if (data.pages?.services) {
+            mergedPages.services = {
+              ...prev.pages.services,
+              ...data.pages.services,
+              hero: { ...prev.pages.services?.hero, ...data.pages.services?.hero },
+              cta: { ...prev.pages.services?.cta, ...data.pages.services?.cta }
+            };
+          }
+          if (data.pages?.insights) {
+            mergedPages.insights = {
+              ...prev.pages.insights,
+              ...data.pages.insights,
+              hero: { ...prev.pages.insights?.hero, ...data.pages.insights?.hero }
+            };
+          }
+          if (data.pages?.contact) {
+            mergedPages.contact = {
+              ...prev.pages.contact,
+              ...data.pages.contact,
+              hero: { ...prev.pages.contact?.hero, ...data.pages.contact?.hero }
             };
           }
           return {

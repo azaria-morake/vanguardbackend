@@ -5,6 +5,7 @@ import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '../firebase';
 import MDEditor from '@uiw/react-md-editor';
 import ConsultButton from '../components/ConsultButton.jsx';
+import { useSettings } from '../context/SettingsContext.jsx';
 
 export const ArticleModal = ({ article, onClose, onContact }) => {
   if (!article) return null;
@@ -190,6 +191,15 @@ export const ArticleCard = ({ article, onReadMore }) => (
 );
 
 const InsightsView = ({ isMobile, onContact, onReadMore }) => {
+  const { settings } = useSettings();
+  const pageData = settings?.pages?.insights || {
+    hero: {
+      title: "Insights",
+      desc: "Expert legal perspectives and strategic guidance tailored for South African business growth.",
+      image: "/insights/insights-hero.png"
+    }
+  };
+
   const [visibleCount, setVisibleCount] = useState(6);
   const [loading, setLoading] = useState(true);
   const [articles, setArticles] = useState([
@@ -388,7 +398,7 @@ const InsightsView = ({ isMobile, onContact, onReadMore }) => {
         <div style={{ 
           position: 'absolute', 
           inset: 0, 
-          backgroundImage: 'url(/insights/insights-hero.png)',
+          backgroundImage: `url(${pageData.hero?.image})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           opacity: 0.4
@@ -411,7 +421,7 @@ const InsightsView = ({ isMobile, onContact, onReadMore }) => {
             letterSpacing: '-0.03em',
             textShadow: '0 10px 30px rgba(0,0,0,0.3)'
           }}>
-            Insights
+            {pageData.hero?.title}
           </h1>
           <p style={{ 
             color: 'white', 
@@ -422,7 +432,7 @@ const InsightsView = ({ isMobile, onContact, onReadMore }) => {
             fontSize: isMobile ? '1.1rem' : '1.2rem',
             lineHeight: 1.6
           }}>
-            Expert legal perspectives and strategic guidance tailored for South African business growth.
+            {pageData.hero?.desc}
           </p>
         </div>
       </section>

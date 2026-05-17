@@ -202,6 +202,54 @@ const AdminPages = ({ showSnackbar }) => {
         >
           📖 About Page Content
         </button>
+        <button
+          onClick={() => setActivePageTab('services')}
+          style={{
+            padding: '0.75rem 1.5rem',
+            borderRadius: '12px',
+            fontWeight: 700,
+            fontSize: '0.95rem',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            border: activePageTab === 'services' ? '1px solid #14b8a6' : '1px solid #334155',
+            background: activePageTab === 'services' ? 'rgba(20, 184, 166, 0.15)' : '#1e293b',
+            color: activePageTab === 'services' ? '#14b8a6' : '#94a3b8'
+          }}
+        >
+          💼 Services Page Content
+        </button>
+        <button
+          onClick={() => setActivePageTab('insights')}
+          style={{
+            padding: '0.75rem 1.5rem',
+            borderRadius: '12px',
+            fontWeight: 700,
+            fontSize: '0.95rem',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            border: activePageTab === 'insights' ? '1px solid #14b8a6' : '1px solid #334155',
+            background: activePageTab === 'insights' ? 'rgba(20, 184, 166, 0.15)' : '#1e293b',
+            color: activePageTab === 'insights' ? '#14b8a6' : '#94a3b8'
+          }}
+        >
+          📰 Insights Page Content
+        </button>
+        <button
+          onClick={() => setActivePageTab('contact')}
+          style={{
+            padding: '0.75rem 1.5rem',
+            borderRadius: '12px',
+            fontWeight: 700,
+            fontSize: '0.95rem',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            border: activePageTab === 'contact' ? '1px solid #14b8a6' : '1px solid #334155',
+            background: activePageTab === 'contact' ? 'rgba(20, 184, 166, 0.15)' : '#1e293b',
+            color: activePageTab === 'contact' ? '#14b8a6' : '#94a3b8'
+          }}
+        >
+          📞 Contact Page Content
+        </button>
       </div>
 
       {/* ======================================= */}
@@ -690,6 +738,261 @@ const AdminPages = ({ showSnackbar }) => {
             </div>
           </div>
 
+        </div>
+      )}
+
+      {/* ======================================= */}
+      {/* SERVICES PAGE CONTENT */}
+      {/* ======================================= */}
+      {activePageTab === 'services' && formData.services && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+          {/* Services Hero Section */}
+          <div className="admin-card" style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '16px', padding: '2rem' }}>
+            <h3 style={{ fontSize: '1.3rem', color: '#14b8a6', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <FileText size={22} /> Services Hero Section
+            </h3>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
+              <div>
+                <label className="admin-label">Hero Title</label>
+                <input
+                  type="text"
+                  className="admin-input"
+                  value={formData.services.hero?.title || ''}
+                  onChange={(e) => handleTextChange('services', 'hero', 'title', e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="admin-label">Hero Description</label>
+                <textarea
+                  className="admin-input"
+                  rows={2}
+                  value={formData.services.hero?.desc || ''}
+                  onChange={(e) => handleTextChange('services', 'hero', 'desc', e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="admin-label">Hero Background Image</label>
+              <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                {formData.services.hero?.image && (
+                  <img
+                    src={formData.services.hero.image}
+                    alt="Services hero preview"
+                    style={{ width: '160px', height: '110px', objectFit: 'cover', borderRadius: '12px', border: '2px solid #334155' }}
+                  />
+                )}
+                <div style={{ flex: 1, minWidth: '220px' }}>
+                  <label className="admin-btn admin-btn-secondary" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', padding: '0.75rem 1.25rem' }}>
+                    {uploadingImage ? <Loader2 className="animate-spin" size={18} /> : <ImageIcon size={18} />}
+                    {uploadingImage ? 'Uploading Image...' : 'Replace Image'}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageUpload(e, 'services', 'hero', 'image')}
+                      style={{ display: 'none' }}
+                      disabled={uploadingImage}
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Services Bottom Pricing CTA Section */}
+          <div className="admin-card" style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '16px', padding: '2rem' }}>
+            <h3 style={{ fontSize: '1.3rem', color: '#14b8a6', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <FileText size={22} /> Clear & Transparent Pricing Section
+            </h3>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
+              <div>
+                <label className="admin-label">Section Title</label>
+                <input
+                  type="text"
+                  className="admin-input"
+                  value={formData.services.cta?.title || ''}
+                  onChange={(e) => handleTextChange('services', 'cta', 'title', e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="admin-label">Section Subtitle</label>
+                <input
+                  type="text"
+                  className="admin-input"
+                  value={formData.services.cta?.subtitle || ''}
+                  onChange={(e) => handleTextChange('services', 'cta', 'subtitle', e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '2rem' }}>
+              <label className="admin-label">Pricing Bullet Points</label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {(formData.services.cta?.bullets || []).map((bullet, idx) => (
+                  <input
+                    key={idx}
+                    type="text"
+                    className="admin-input"
+                    value={bullet}
+                    onChange={(e) => handleStringArrayChange('services', 'cta', 'bullets', idx, e.target.value)}
+                    placeholder={`Bullet #${idx + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="admin-label">Section Background Image</label>
+              <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                {formData.services.cta?.image && (
+                  <img
+                    src={formData.services.cta.image}
+                    alt="Services CTA preview"
+                    style={{ width: '160px', height: '110px', objectFit: 'cover', borderRadius: '12px', border: '2px solid #334155' }}
+                  />
+                )}
+                <div style={{ flex: 1, minWidth: '220px' }}>
+                  <label className="admin-btn admin-btn-secondary" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', padding: '0.75rem 1.25rem' }}>
+                    {uploadingImage ? <Loader2 className="animate-spin" size={18} /> : <ImageIcon size={18} />}
+                    {uploadingImage ? 'Uploading Image...' : 'Replace Image'}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageUpload(e, 'services', 'cta', 'image')}
+                      style={{ display: 'none' }}
+                      disabled={uploadingImage}
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ======================================= */}
+      {/* INSIGHTS PAGE CONTENT */}
+      {/* ======================================= */}
+      {activePageTab === 'insights' && formData.insights && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+          <div className="admin-card" style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '16px', padding: '2rem' }}>
+            <h3 style={{ fontSize: '1.3rem', color: '#14b8a6', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <FileText size={22} /> Insights Hero Section
+            </h3>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
+              <div>
+                <label className="admin-label">Hero Title</label>
+                <input
+                  type="text"
+                  className="admin-input"
+                  value={formData.insights.hero?.title || ''}
+                  onChange={(e) => handleTextChange('insights', 'hero', 'title', e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="admin-label">Hero Description</label>
+                <textarea
+                  className="admin-input"
+                  rows={2}
+                  value={formData.insights.hero?.desc || ''}
+                  onChange={(e) => handleTextChange('insights', 'hero', 'desc', e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="admin-label">Hero Background Image</label>
+              <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                {formData.insights.hero?.image && (
+                  <img
+                    src={formData.insights.hero.image}
+                    alt="Insights hero preview"
+                    style={{ width: '160px', height: '110px', objectFit: 'cover', borderRadius: '12px', border: '2px solid #334155' }}
+                  />
+                )}
+                <div style={{ flex: 1, minWidth: '220px' }}>
+                  <label className="admin-btn admin-btn-secondary" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', padding: '0.75rem 1.25rem' }}>
+                    {uploadingImage ? <Loader2 className="animate-spin" size={18} /> : <ImageIcon size={18} />}
+                    {uploadingImage ? 'Uploading Image...' : 'Replace Image'}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageUpload(e, 'insights', 'hero', 'image')}
+                      style={{ display: 'none' }}
+                      disabled={uploadingImage}
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ======================================= */}
+      {/* CONTACT PAGE CONTENT */}
+      {/* ======================================= */}
+      {activePageTab === 'contact' && formData.contact && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+          <div className="admin-card" style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '16px', padding: '2rem' }}>
+            <h3 style={{ fontSize: '1.3rem', color: '#14b8a6', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <FileText size={22} /> Contact Hero Section
+            </h3>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
+              <div>
+                <label className="admin-label">Hero Title</label>
+                <input
+                  type="text"
+                  className="admin-input"
+                  value={formData.contact.hero?.title || ''}
+                  onChange={(e) => handleTextChange('contact', 'hero', 'title', e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="admin-label">Hero Description</label>
+                <textarea
+                  className="admin-input"
+                  rows={2}
+                  value={formData.contact.hero?.desc || ''}
+                  onChange={(e) => handleTextChange('contact', 'hero', 'desc', e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="admin-label">Hero Background Image</label>
+              <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                {formData.contact.hero?.image && (
+                  <img
+                    src={formData.contact.hero.image}
+                    alt="Contact hero preview"
+                    style={{ width: '160px', height: '110px', objectFit: 'cover', borderRadius: '12px', border: '2px solid #334155' }}
+                  />
+                )}
+                <div style={{ flex: 1, minWidth: '220px' }}>
+                  <label className="admin-btn admin-btn-secondary" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', padding: '0.75rem 1.25rem' }}>
+                    {uploadingImage ? <Loader2 className="animate-spin" size={18} /> : <ImageIcon size={18} />}
+                    {uploadingImage ? 'Uploading Image...' : 'Replace Image'}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImageUpload(e, 'contact', 'hero', 'image')}
+                      style={{ display: 'none' }}
+                      disabled={uploadingImage}
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

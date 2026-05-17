@@ -5,6 +5,8 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
 
+import { useSettings } from '../context/SettingsContext.jsx';
+
 const ServiceCategory = ({ title, desc, includes, delay, isMobile }) => (
 // ... (omitting ServiceCategory content as it stays same, but I must provide full ReplacementContent for the range)
   <motion.div
@@ -44,14 +46,24 @@ const ServiceCategory = ({ title, desc, includes, delay, isMobile }) => (
 );
 
 const ServicesView = ({ onNavigate, onContact, isMobile }) => {
+  const { settings } = useSettings();
+  const pageData = settings?.pages?.services || {
+    hero: {
+      title: "Legal support for every stage of your business",
+      desc: "Clear, practical legal and compliance support designed for SMEs.",
+      image: "/services.png"
+    },
+    cta: {
+      title: "Clear and transparent pricing",
+      bullets: ["Fixed-fee services where possible", "Upfront pricing clarity", "No unnecessary hourly billing"],
+      subtitle: "Not sure where to start? We'll guide you.",
+      image: "/dimitri-karastelev-ZH4FUYiaczY-unsplash.jpg"
+    }
+  };
+
   const [activeIdx, setActiveIdx] = useState(0);
   const scrollRef = useRef(null);
-  const [services, setServices] = useState([
-    { title: "Contract Drafting & Review", desc: "Clear, enforceable agreements that protect your business and reduce risk", includes: ["Supplier agreements", "Client contracts", "NDAs", "Shareholder agreements", "Terms and conditions"] },
-    { title: "Corporate & Compliance Support", desc: "Stay compliant and avoid penalties or governance issues", includes: ["CIPC compliance", "Beneficial ownership requirements", "Corporate governance", "Regulatory compliance", "Licensing and permits"] },
-    { title: "Ongoing Legal Advisory", desc: "Consistent legal support as your business grows", includes: ["Day-to-day legal queries", "Contract reviews", "Risk guidance", "Strategic input", "Compliance support"] },
-    { title: "Commercial Legal Support", desc: "Structure your business relationships properly", includes: ["Partnerships and agreements", "Business structuring", "Commercial negotiations", "Transaction support", "Advisory on business arrangements"] }
-  ]);
+  const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -76,7 +88,6 @@ const ServicesView = ({ onNavigate, onContact, isMobile }) => {
 
     if (maxScroll <= 0) return;
 
-    // Map the scroll progress (0-1) to the number of dots (0 to services.length - 1)
     const progress = scrollLeft / maxScroll;
     const newIndex = Math.round(progress * (services.length - 1));
 
@@ -88,7 +99,7 @@ const ServicesView = ({ onNavigate, onContact, isMobile }) => {
   const scrollCarousel = (direction) => {
     if (!scrollRef.current) return;
     const { scrollLeft, clientWidth } = scrollRef.current;
-    const scrollAmount = clientWidth * 0.6; // Scroll 60% of width for smooth transition
+    const scrollAmount = clientWidth * 0.6;
 
     scrollRef.current.scrollTo({
       left: direction === 'left' ? scrollLeft - scrollAmount : scrollLeft + scrollAmount,
@@ -131,7 +142,7 @@ const ServicesView = ({ onNavigate, onContact, isMobile }) => {
               animate={{ opacity: 1, y: 0 }}
               style={{ fontSize: '3rem', marginBottom: '1rem', marginTop: '0rem', color: 'white' }}
             >
-              Legal support for every stage of your business
+              {pageData.hero?.title}
             </motion.h1>
 
             <motion.p
@@ -140,7 +151,7 @@ const ServicesView = ({ onNavigate, onContact, isMobile }) => {
               transition={{ delay: 0.1 }}
               style={{ fontSize: '1.25rem', opacity: 0.9 }}
             >
-              Clear, practical legal and compliance support designed for SMEs.
+              {pageData.hero?.desc}
             </motion.p>
           </div>
 
@@ -150,7 +161,7 @@ const ServicesView = ({ onNavigate, onContact, isMobile }) => {
             className="hero-image-container"
             style={{
               position: 'absolute', right: 0, top: 0, height: '100%', width: '45%',
-              backgroundImage: 'url(/services.png)',
+              backgroundImage: `url(${pageData.hero?.image})`,
               backgroundSize: 'cover', backgroundPosition: 'center',
               borderBottomLeftRadius: '60px'
             }}
@@ -162,11 +173,8 @@ const ServicesView = ({ onNavigate, onContact, isMobile }) => {
 
       <section className="section-padding" style={{ background: 'var(--color-bg)', paddingBottom: 0 }}>
         <div className="container">
-
-          {/* --- UNIFIED CAROUSEL (Desktop & Mobile) --- */}
           <div style={{ width: '100%', marginBottom: '5rem' }}>
             <div style={{ position: 'relative' }}>
-              {/* Navigation Arrows */}
               {!isMobile && (
                 <>
                   <button
@@ -228,17 +236,15 @@ const ServicesView = ({ onNavigate, onContact, isMobile }) => {
               ))}
             </div>
           </div>
-
         </div>
 
-        {/* Full-width CTA Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="about-cta-container"
           style={{
-            marginTop: '0', // Removed large top margin to sit closer to the grid/carousel
+            marginTop: '0',
             background: 'var(--color-primary)',
             position: 'relative',
             overflow: 'visible',
@@ -249,29 +255,25 @@ const ServicesView = ({ onNavigate, onContact, isMobile }) => {
             justifyContent: 'center'
           }}
         >
-          {/* Background Clipping Container */}
           <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
-            {/* Left side Image - Fixed width on desktop to prevent overlap */}
             <div className="about-cta-image-container hide-on-mobile" style={{
               position: 'absolute',
               left: 0,
               top: 0,
               width: '40%',
               height: '100%',
-              backgroundImage: 'url(/dimitri-karastelev-ZH4FUYiaczY-unsplash.jpg)',
+              backgroundImage: `url(${pageData.cta?.image})`,
               backgroundSize: 'cover',
               backgroundPosition: 'left center'
             }}>
-              {/* Strong gradient to fade into dark background */}
               <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(15,23,42,0) 60%, var(--color-primary) 100%)' }}></div>
             </div>
 
-            {/* Mobile Image - Full width top background */}
             <div className="about-cta-image-container show-on-mobile" style={{
               position: 'relative',
               width: '100%',
               height: '250px',
-              backgroundImage: 'linear-gradient(to right, rgba(15,23,42,0.9), rgba(15,23,42,0.25)), url(/dimitri-karastelev-ZH4FUYiaczY-unsplash.jpg)',
+              backgroundImage: `linear-gradient(to right, rgba(15,23,42,0.9), rgba(15,23,42,0.25)), url(${pageData.cta?.image})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center'
             }}>
@@ -279,16 +281,15 @@ const ServicesView = ({ onNavigate, onContact, isMobile }) => {
             </div>
           </div>
 
-          {/* Content properly aligned to the grid container */}
           <div className="container" style={{ position: 'relative', zIndex: 10, width: '100%' }}>
             <div className="responsive-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '4rem' }}>
-              <div className="hide-on-mobile"></div> {/* Leaves left empty */}
+              <div className="hide-on-mobile"></div>
               <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', padding: '4rem var(--spacing-6)' }}>
                 <h3 style={{ fontSize: '2.5rem', color: 'white', marginBottom: '1.5rem', lineHeight: 1.1 }}>
-                  Clear and transparent pricing
+                  {pageData.cta?.title}
                 </h3>
                 <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2.5rem' }}>
-                  {["Fixed-fee services where possible", "Upfront pricing clarity", "No unnecessary hourly billing"].map((item, i) => (
+                  {(pageData.cta?.bullets || []).map((item, i) => (
                     <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: '#cbd5e1', fontSize: '1.15rem' }}>
                       <div style={{ background: 'var(--color-secondary)', width: '24px', height: '24px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '0.8rem', flexShrink: 0 }}>
                         ✔
@@ -297,7 +298,7 @@ const ServicesView = ({ onNavigate, onContact, isMobile }) => {
                     </li>
                   ))}
                 </ul>
-                <div style={{ marginBottom: '2rem', fontSize: '1.2rem', color: '#cbd5e1' }}>Not sure where to start? We'll guide you.</div>
+                <div style={{ marginBottom: '2rem', fontSize: '1.2rem', color: '#cbd5e1' }}>{pageData.cta?.subtitle}</div>
                 <div className="hero-cta-group">
                   <ConsultButton onSelectContact={onContact} className="btn btn-teal" direction="up" style={{ padding: '1rem 2rem', fontSize: '1rem' }}>
                     Book a consultation
