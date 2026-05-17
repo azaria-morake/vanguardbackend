@@ -4,7 +4,6 @@ import { AlignRight, X } from 'lucide-react'
 import { useSettings } from './context/SettingsContext.jsx'
 
 // Components
-// ... (omitting imports)
 import Hero from './components/Hero.jsx'
 import AboutSection from './components/AboutSection.jsx'
 import FeaturesSection from './components/FeaturesSection.jsx'
@@ -26,7 +25,6 @@ import AdminDashboard from './views/admin/AdminDashboard.jsx'
 
 function App() {
   const { settings, loading } = useSettings();
-// ... (omitting App body)
   // Initialize from hash or default to home
   const [activeView, setActiveView] = useState(() => {
     const hash = window.location.hash.replace('#', '');
@@ -100,11 +98,9 @@ function App() {
   }
 
   return (
-// ... (omitting return body for range)
     <div className="app-container" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'white' }}>
 
       {/* Navigation */}
-// ... (omitting header content)
       {activeView !== 'admin' && (
         <header
           className="flat-header"
