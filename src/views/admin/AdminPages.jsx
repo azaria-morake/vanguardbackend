@@ -92,7 +92,7 @@ const AdminPages = ({ showSnackbar }) => {
       const storageRef = ref(storage, `images/pages/${Date.now()}_${file.name}`);
       await uploadBytes(storageRef, file);
       const url = await getDownloadURL(storageRef);
-      
+
       if (oldUrl && oldUrl.includes('firebasestorage')) {
         try {
           await deleteObject(ref(storage, oldUrl));
@@ -149,7 +149,7 @@ const AdminPages = ({ showSnackbar }) => {
     <div style={{ color: '#f8fafc', padding: '1rem 0' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h2 style={{ fontSize: '1.8rem', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <h2 style={{ color: '#f8fafc', fontSize: '1.8rem', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <Layout className="text-teal-400" />
             Page Content Manager
           </h2>
@@ -184,7 +184,7 @@ const AdminPages = ({ showSnackbar }) => {
             color: activePageTab === 'home' ? '#14b8a6' : '#94a3b8'
           }}
         >
-          🏠 Home Page Content
+          {/* 🏠 */}  Home Page Content
         </button>
         <button
           onClick={() => setActivePageTab('about')}
@@ -200,7 +200,7 @@ const AdminPages = ({ showSnackbar }) => {
             color: activePageTab === 'about' ? '#14b8a6' : '#94a3b8'
           }}
         >
-          📖 About Page Content
+          {/* 📖 */}  About Page Content
         </button>
         <button
           onClick={() => setActivePageTab('services')}
@@ -216,7 +216,7 @@ const AdminPages = ({ showSnackbar }) => {
             color: activePageTab === 'services' ? '#14b8a6' : '#94a3b8'
           }}
         >
-          💼 Services Page Content
+          {/* 💼 */}  Services Page Content
         </button>
         <button
           onClick={() => setActivePageTab('insights')}
@@ -232,7 +232,7 @@ const AdminPages = ({ showSnackbar }) => {
             color: activePageTab === 'insights' ? '#14b8a6' : '#94a3b8'
           }}
         >
-          📰 Insights Page Content
+          {/* 📰 */} Insights Page Content
         </button>
         <button
           onClick={() => setActivePageTab('contact')}
@@ -248,7 +248,7 @@ const AdminPages = ({ showSnackbar }) => {
             color: activePageTab === 'contact' ? '#14b8a6' : '#94a3b8'
           }}
         >
-          📞 Contact Page Content
+          {/* 📞 */} Contact Page Content
         </button>
       </div>
 
@@ -257,13 +257,13 @@ const AdminPages = ({ showSnackbar }) => {
       {/* ======================================= */}
       {activePageTab === 'home' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
-          
+
           {/* About Vanguard Legal Section */}
           <div className="admin-card" style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '16px', padding: '2rem' }}>
             <h3 style={{ fontSize: '1.3rem', color: '#14b8a6', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <FileText size={22} /> About Vanguard Legal Section
             </h3>
-            
+
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '1.5rem' }}>
               <div>
                 <label className="admin-label">Tagline (Uppercase Header)</label>
@@ -351,7 +351,7 @@ const AdminPages = ({ showSnackbar }) => {
             <h3 style={{ fontSize: '1.3rem', color: '#14b8a6', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <FileText size={22} /> How We Help & Why Choose Us Section
             </h3>
-            
+
             <div style={{ marginBottom: '2rem' }}>
               <label className="admin-label">Features Section Title</label>
               <input
@@ -559,7 +559,7 @@ const AdminPages = ({ showSnackbar }) => {
       {/* ======================================= */}
       {activePageTab === 'about' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
-          
+
           {/* About Hero Section */}
           <div className="admin-card" style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '16px', padding: '2rem' }}>
             <h3 style={{ fontSize: '1.3rem', color: '#14b8a6', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -751,7 +751,7 @@ const AdminPages = ({ showSnackbar }) => {
             <h3 style={{ fontSize: '1.3rem', color: '#14b8a6', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <FileText size={22} /> Services Hero Section
             </h3>
-            
+
             <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
               <div>
                 <label className="admin-label">Hero Title</label>

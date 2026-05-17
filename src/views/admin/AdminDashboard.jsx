@@ -82,16 +82,28 @@ const AdminDashboard = ({ onNavigate }) => {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', backgroundColor: '#0f172a', padding: '1.5rem', position: 'relative', zIndex: 9999 }}>
         <div style={{ position: 'absolute', inset: 0, opacity: 0.1, backgroundImage: 'radial-gradient(circle at center, #14b8a6 0%, transparent 70%)' }}></div>
         
-        <div style={{ width: '100%', maxWidth: '440px', backgroundColor: '#020617', border: '1px solid #1e293b', borderRadius: '24px', padding: '3rem 2.5rem', position: 'relative', zIndex: 10, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
-            <div style={{ width: '56px', height: '56px', borderRadius: '16px', backgroundColor: 'rgba(20, 184, 166, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #14b8a6' }}>
-              <Lock size={28} color="#14b8a6" />
-            </div>
+        <div style={{ width: '100%', maxWidth: '440px', backgroundColor: '#020617', border: '1px solid #1e293b', borderRadius: '24px', padding: '3.5rem 2.5rem', position: 'relative', zIndex: 10, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
+            <div
+              style={{
+                height: '4rem',
+                width: '260px',
+                backgroundColor: '#14b8a6',
+                maskImage: 'url("/vlegal-transparent.png")',
+                WebkitMaskImage: 'url("/vlegal-transparent.png")',
+                maskSize: 'contain',
+                WebkitMaskSize: 'contain',
+                maskRepeat: 'no-repeat',
+                WebkitMaskRepeat: 'no-repeat',
+                maskPosition: 'center'
+              }}
+              title="Vanguard Legal Logo"
+            />
           </div>
 
           <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-            <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#f8fafc', marginBottom: '0.5rem', letterSpacing: '0.05em' }}>VANGUARD CMS</h1>
-            <p style={{ color: '#94a3b8', fontSize: '0.95rem' }}>Secure administrative access only.</p>
+            <h1 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#94a3b8', marginBottom: '0.25rem', letterSpacing: '0.15em' }}>CONTENT MANAGEMENT SYSTEM</h1>
+            <p style={{ color: '#64748b', fontSize: '0.85rem' }}>Secure administrative access only.</p>
           </div>
 
           {loginError && (
@@ -145,7 +157,7 @@ const AdminDashboard = ({ onNavigate }) => {
           </form>
 
           <div style={{ marginTop: '2.5rem', textAlign: 'center', borderTop: '1px solid #1e293b', paddingTop: '1.5rem' }}>
-            <button onClick={() => onNavigate('home')} style={{ color: '#14b8a6', fontSize: '0.9rem', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer' }}>
+            <button onClick={() => onNavigate('home')} style={{ color: '#14b8a6', fontSize: '0.9rem', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer', background: 'transparent', border: 'none' }}>
               <span>← Return to Public Website</span>
             </button>
           </div>
@@ -159,11 +171,22 @@ const AdminDashboard = ({ onNavigate }) => {
     <div className="admin-container" style={{ width: '100%', minHeight: '100vh' }}>
       {/* Sidebar */}
       <aside className="admin-sidebar">
-        <div className="admin-sidebar-logo">
-          <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#14b8a6', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#020617', fontWeight: 800, fontSize: '1rem' }}>
-            V
-          </div>
-          <span>Vanguard CMS</span>
+        <div className="admin-sidebar-logo" style={{ marginBottom: '2rem', padding: '0.5rem 0' }}>
+          <div
+            style={{
+              height: '2.5rem',
+              width: '180px',
+              backgroundColor: '#14b8a6',
+              maskImage: 'url("/vlegal-transparent.png")',
+              WebkitMaskImage: 'url("/vlegal-transparent.png")',
+              maskSize: 'contain',
+              WebkitMaskSize: 'contain',
+              maskRepeat: 'no-repeat',
+              WebkitMaskRepeat: 'no-repeat',
+              maskPosition: 'left center'
+            }}
+            title="Vanguard Legal Logo"
+          />
         </div>
 
         <nav className="admin-nav">
