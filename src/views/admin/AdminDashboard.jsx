@@ -21,10 +21,11 @@ const AdminDashboard = ({ onNavigate }) => {
     setTimeout(() => setSnackbar(null), 4000);
   };
 
-  const confirmAction = (title, message, onConfirmAction) => {
+  const confirmAction = (title, message, onConfirmAction, confirmLabel = "Confirm Delete") => {
     setConfirmDialog({
       title,
       message,
+      confirmLabel,
       onConfirm: async () => {
         setConfirmDialog(null);
         await onConfirmAction();
@@ -230,7 +231,12 @@ const AdminDashboard = ({ onNavigate }) => {
           </div>
 
           <button
-            onClick={handleLogout}
+            onClick={() => confirmAction(
+              "Sign Out",
+              "Are you sure you want to securely sign out of the Vanguard CMS? Any unsaved edits will be lost.",
+              handleLogout,
+              "Sign Out"
+            )}
             style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem 1rem', borderRadius: '10px', color: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '0.9rem', transition: 'background 0.2s' }}
           >
             <LogOut size={18} />
@@ -291,7 +297,7 @@ const AdminDashboard = ({ onNavigate }) => {
               <p style={{ color: '#94a3b8', fontSize: '0.95rem', marginBottom: '2rem', lineHeight: 1.5 }}>{confirmDialog.message}</p>
               <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
                 <button onClick={() => setConfirmDialog(null)} className="admin-btn admin-btn-secondary" style={{ flex: 1, padding: '0.75rem 1rem' }}>Cancel</button>
-                <button onClick={confirmDialog.onConfirm} className="admin-btn admin-btn-danger" style={{ flex: 1, padding: '0.75rem 1rem', fontWeight: 700 }}>Confirm Delete</button>
+                <button onClick={confirmDialog.onConfirm} className="admin-btn admin-btn-danger" style={{ flex: 1, padding: '0.75rem 1rem', fontWeight: 700 }}>{confirmDialog.confirmLabel || "Confirm Delete"}</button>
               </div>
             </motion.div>
           </div>
