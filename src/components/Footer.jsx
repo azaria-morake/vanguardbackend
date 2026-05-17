@@ -256,17 +256,8 @@ const Footer = ({ onNavigate, onContact, onLegal, isMobile }) => {
 
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.75rem', fontSize: '0.8rem', opacity: 0.7 }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '0.8rem', opacity: 0.7 }}>
           <span>&copy; {new Date().getFullYear()} - Vanguard Legal</span>
-          <span>•</span>
-          <button
-            onClick={() => onNavigate('admin')}
-            style={{ color: 'inherit', fontSize: '0.8rem', opacity: 0.6, cursor: 'pointer', textDecoration: 'underline' }}
-            onMouseEnter={e => e.currentTarget.style.opacity = '1'}
-            onMouseLeave={e => e.currentTarget.style.opacity = '0.6'}
-          >
-            Admin Portal
-          </button>
         </div>
       </div>
     </footer>
