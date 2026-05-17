@@ -17,7 +17,7 @@ const AdminArticles = ({ showSnackbar, confirmAction }) => {
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, 'articles'), (snapshot) => {
       const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      // Sort by date or display order if needed
+      list.sort((a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime());
       setArticles(list);
       setLoading(false);
     }, (error) => {
@@ -115,6 +115,7 @@ const AdminArticles = ({ showSnackbar, confirmAction }) => {
 
     try {
       if (modalMode === 'add') {
+        articleData.createdAt = Date.now();
         await addDoc(collection(db, 'articles'), articleData);
         showSnackbar("Insight published successfully!", "success");
       } else {

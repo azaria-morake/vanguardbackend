@@ -361,10 +361,10 @@ const InsightsView = ({ isMobile, onContact, onReadMore }) => {
   ]);
 
   useEffect(() => {
-    const q = query(collection(db, 'articles'), orderBy('date', 'desc'));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const articlesData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const unsubscribe = onSnapshot(collection(db, 'articles'), (snapshot) => {
+      const articlesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       if (articlesData.length > 0) {
+        articlesData.sort((a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime());
         setArticles(articlesData);
       }
       setLoading(false);
