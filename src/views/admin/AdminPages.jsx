@@ -4,7 +4,7 @@ import { doc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../firebase';
 import { useSettings } from '../../context/SettingsContext';
-import { Save, Loader2, Image as ImageIcon, FileText, Layout, Trash2 } from 'lucide-react';
+import { Save, Loader2, Image as ImageIcon, FileText, Layout } from 'lucide-react';
 
 const AdminPages = ({ showSnackbar }) => {
   const { settings, loading: contextLoading } = useSettings();
@@ -60,24 +60,6 @@ const AdminPages = ({ showSnackbar }) => {
     });
   };
 
-  // Remove string item from array
-  const handleRemoveStringItem = (page, section, arrayField, index) => {
-    setFormData(prev => {
-      const newArray = [...(prev[page][section][arrayField] || [])];
-      newArray.splice(index, 1);
-      return {
-        ...prev,
-        [page]: {
-          ...prev[page],
-          [section]: {
-            ...prev[page][section],
-            [arrayField]: newArray
-          }
-        }
-      };
-    });
-  };
-
   // Handle array of objects updates (like cards, steps, testimonials)
   const handleObjectArrayChange = (page, section, arrayField, index, objField, value) => {
     setFormData(prev => {
@@ -86,24 +68,6 @@ const AdminPages = ({ showSnackbar }) => {
         ...newArray[index],
         [objField]: value
       };
-      return {
-        ...prev,
-        [page]: {
-          ...prev[page],
-          [section]: {
-            ...prev[page][section],
-            [arrayField]: newArray
-          }
-        }
-      };
-    });
-  };
-
-  // Remove object item from array
-  const handleRemoveObjectItem = (page, section, arrayField, index) => {
-    setFormData(prev => {
-      const newArray = [...(prev[page][section][arrayField] || [])];
-      newArray.splice(index, 1);
       return {
         ...prev,
         [page]: {
@@ -269,14 +233,6 @@ const AdminPages = ({ showSnackbar }) => {
                       onChange={(e) => handleStringArrayChange('home', 'about', 'bullets', idx, e.target.value)}
                       placeholder="Benefit statement"
                     />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveStringItem('home', 'about', 'bullets', idx)}
-                      style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '0.25rem' }}
-                      title="Delete bullet point"
-                    >
-                      <Trash2 size={18} />
-                    </button>
                   </div>
                 ))}
               </div>
@@ -335,17 +291,7 @@ const AdminPages = ({ showSnackbar }) => {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
                 {formData.home.features.cards?.map((card, idx) => (
                   <div key={idx} style={{ background: '#1e293b', border: '1px solid #334155', padding: '1.25rem', borderRadius: '12px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                      <div style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 700 }}>CARD {idx + 1}</div>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveObjectItem('home', 'features', 'cards', idx)}
-                        style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '0.25rem' }}
-                        title="Delete card"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
+                    <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.5rem', fontWeight: 700 }}>CARD {idx + 1}</div>
                     <input
                       type="text"
                       className="admin-input"
@@ -406,14 +352,6 @@ const AdminPages = ({ showSnackbar }) => {
                         onChange={(e) => handleStringArrayChange('home', 'features', 'reasons', idx, e.target.value)}
                         placeholder="Reason description"
                       />
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveStringItem('home', 'features', 'reasons', idx)}
-                        style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '0.25rem' }}
-                        title="Delete reason"
-                      >
-                        <Trash2 size={18} />
-                      </button>
                     </div>
                   ))}
                 </div>
@@ -457,14 +395,6 @@ const AdminPages = ({ showSnackbar }) => {
                         placeholder="Step description"
                       />
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveObjectItem('home', 'howItWorks', 'steps', idx)}
-                      style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '0.25rem' }}
-                      title="Delete step"
-                    >
-                      <Trash2 size={18} />
-                    </button>
                   </div>
                 ))}
               </div>
@@ -495,17 +425,7 @@ const AdminPages = ({ showSnackbar }) => {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 {formData.home.testimonials.list?.map((t, idx) => (
                   <div key={idx} style={{ background: '#1e293b', border: '1px solid #334155', padding: '1.5rem', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 700 }}>TESTIMONIAL #{idx + 1}</div>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveObjectItem('home', 'testimonials', 'list', idx)}
-                        style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '0.25rem' }}
-                        title="Delete testimonial"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
+                    <div style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 700 }}>TESTIMONIAL #{idx + 1}</div>
                     <textarea
                       className="admin-input"
                       rows="3"
@@ -680,14 +600,6 @@ const AdminPages = ({ showSnackbar }) => {
                       value={bullet || ''}
                       onChange={(e) => handleStringArrayChange('about', 'approach', 'bullets', idx, e.target.value)}
                     />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveStringItem('about', 'approach', 'bullets', idx)}
-                      style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '0.25rem' }}
-                      title="Delete approach item"
-                    >
-                      <Trash2 size={18} />
-                    </button>
                   </div>
                 ))}
               </div>
